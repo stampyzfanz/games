@@ -38,9 +38,16 @@ function draw() {
 	}
 }
 
-function keyPressed() {
-	if (key == ' ') { // used tut for key name
+// function keyPressed() {
+// 	if (key == ' ') { // used tut for key name
+// 		// print('lol');
+// 		b.up();
+// 	}
+// }
+
+function mousePressed() {
+// 	if (key == ' ') { // used tut for key name
 		// print('lol');
 		b.up();
-	}
+// 	}
 }
