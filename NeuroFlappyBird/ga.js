@@ -44,27 +44,27 @@ function calcFitness() {
 // }
 
 function pickOne(birds) {
-  // Start at 0
-  let index = 0;
+	// Start at 0
+	let index = 0;
 
-  // Pick a random number between 0 and 1
-  let r = random(1);
+	// Pick a random number between 0 and 1
+	let r = random(1);
 
-  // Keep subtracting probabilities until you get less than zero
-  // Higher probabilities will be more likely to be fixed since they will
-  // subtract a larger number towards zero
-  while (r > 0) {
-    r -= birds[index].fitness;
-    // And move on to the next
-    index += 1;
-  }
+	// Keep subtracting probabilities until you get less than zero
+	// Higher probabilities will be more likely to be picked since they will
+	// subtract a larger number towards zero
+	while (r > 0) {
+		r -= birds[index].fitness;
+		// And move on to the next
+		index += 1;
+	}
 
-  // Go back one
-  index -= 1;
+	// Go back one
+	index -= 1;
 
-  // Make sure it's a copy!
-  // (this includes mutation)
-  // console.log(birds);
-  // console.log(birds[index]);
-  return birds[index].copy();
+	// Make sure it's a copy!
+	// (this includes mutation)
+	// console.log(birds);
+	// console.log(birds[index]);
+	return birds[index].copy();
 }
