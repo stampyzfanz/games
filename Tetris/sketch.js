@@ -37,6 +37,7 @@ function setup() {
 	}
 
 	findTetrominoTypes();
+	setupDom();
 }
 
 function draw() {
