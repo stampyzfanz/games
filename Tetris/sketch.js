@@ -20,6 +20,9 @@ let moveInterval;
 
 
 function setup() {
+	w = debug ? 55 : 25;
+	moveInterval = debug ? 512 : 256;
+
 	// 20 by 10
 	// 20:10
 	// 10:5
@@ -38,9 +41,6 @@ function setup() {
 			grid.push(cell);
 		}
 	}
-
-	w = debug ? 25 : 55;
-	moveInterval = debug ? 256 : 512;
 
 	if (debug) {
 		debugSetup();
