@@ -13,13 +13,11 @@ let grid = [];
 let tetrominoes = [];
 let active_tetromino;
 
-// let moveInterval = 250;
 let moveInterval;
-// let moveInterval = 25;
-// let moveInterval = 5;
 
+let points = 0;
 
-function setup() {
+async function setup() {
 	w = debug ? 55 : 25;
 	moveInterval = debug ? 512 : 256;
 
@@ -29,7 +27,7 @@ function setup() {
 	// 2:1
 	// 550:x
 	// 550:275
-	createCanvas(275, 550)
+	createCanvas(250, 550)
 		.parent('#canvas');
 
 	cols = width / w;
@@ -42,25 +40,33 @@ function setup() {
 		}
 	}
 
+	findTetrominoTypes();
+	setupDom();
+
+	await sleep(500);
+
 	if (debug) {
 		debugSetup();
 	}
-
-	findTetrominoTypes();
-	setupDom();
 }
 
 function debugSetup() {
 	active_tetromino = null;
 	tetrominoes = [];
 
+	// flat
 	let t = new Tetromino(0, 0, 0);
+	t.y = rows - 1 - 1;
+	tetrominoes.push(t);
+
+	t = new Tetromino(0, 0, 1);
 	t.y = rows - 1;
 	tetrominoes.push(t);
 
-	t = new Tetromino(3, 5, 1);
+	// edge
+	t = new Tetromino(3, 5, 2);
 	t.rotate(3);
-	t.y = rows - 3;
+	t.y = rows - 3 - 1;
 	tetrominoes.push(t);
 }
 
@@ -70,6 +76,11 @@ function draw() {
 	for (let c of grid) {
 		c.show();
 	}
+
+	fill(255, 0, 255);
+	textAlign(CENTER, CENTER);
+	textSize(32);
+	text(points, width / 2, height / 4);
 }
 
 function update(updateLogic) {
@@ -95,7 +106,6 @@ function update(updateLogic) {
 }
 
 function reset() {
-	console.log("reset");
 	for (let c of grid) {
 		c.reset();
 	}
@@ -103,6 +113,8 @@ function reset() {
 	active_tetromino = null;
 	tetrominoes = [];
 	pickTetromino();
+
+	points = 0;
 }
 
 function checkRowCleared(rowNumber) {
@@ -120,6 +132,8 @@ function checkRowCleared(rowNumber) {
 	for (let t of tetrominoes) {
 		t.moveDown(rowNumber);
 	}
+
+	points += cols;
 }
 
 function checkAllRowsCleared() {
