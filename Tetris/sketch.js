@@ -4,7 +4,7 @@
 // simple wikipedia explanation.
 
 
-let w = 25; // width of each cell
+let w = 55; // width of each cell
 let cols, rows;
 
 let grid = [];
@@ -12,7 +12,8 @@ let grid = [];
 let tetrominoes = [];
 let active_tetromino;
 
-let moveInterval = 250;
+// let moveInterval = 250;
+let moveInterval = 512;
 // let moveInterval = 25;
 // let moveInterval = 5;
 
@@ -40,6 +41,20 @@ function setup() {
 	setupDom();
 }
 
+function debug() {
+	active_tetromino = null;
+	tetrominoes = [];
+
+	let t = new Tetromino(0, 0, 0);
+	t.y = rows - 1;
+	tetrominoes.push(t);
+
+	t = new Tetromino(3, 5, 1);
+	t.rotate(3);
+	t.y = rows - 3;
+	tetrominoes.push(t);
+}
+
 function draw() {
 	background(0);
 
@@ -60,16 +75,16 @@ function update(updateLogic) {
 	}
 
 	if (updateLogic == "don't update the logic please") {
-		active_tetromino.updateCells(false);
+		// active_tetromino.updateCells(false);
 	} else {
-		active_tetromino.updateCells(true);
+		// active_tetromino.updateCells(true);
 	}
 
-	checkRowCleared();
+	checkAllRowsCleared();
 }
 
 function reset() {
-	console.log("reset")
+	console.log("reset");
 	for (let c of grid) {
 		c.reset();
 	}
@@ -79,9 +94,10 @@ function reset() {
 	pickTetromino();
 }
 
-function checkRowCleared() {
+function checkRowCleared(rowNumber) {
 	// checks the bottom row to see if it is all full
-	let y = rows - 1;
+	// let y = rows - 1;
+	let y = rowNumber;
 
 	for (let x = 0; x < cols; x++) {
 		if (!(grid[index(x, y)].isUsed)) {
@@ -89,8 +105,15 @@ function checkRowCleared() {
 		}
 	}
 
+	// the row is used
 	for (let t of tetrominoes) {
-		t.moveDown();
+		t.moveDown(rowNumber);
+	}
+}
+
+function checkAllRowsCleared() {
+	for (let row = 0; row < rows; row++) {
+		checkRowCleared(row);
 	}
 }
 

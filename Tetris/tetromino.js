@@ -148,22 +148,76 @@ class Tetromino {
 		}
 	}
 
-	moveDown() {
-		this.y++;
-		if (this.y >= this.rows) {
-			// RIP
-			kill(this.i);
-			return;
-		}
+	// moveDown(rowNumber) {
+	// 	if (this.y <= rowNumber) {
+	// 		this.y++;
+	// 		if (this.y >= this.rows) {
+	// 			// RIP
+	// 			kill(this.i);
+	// 			return;
+	// 		}
 
-		// debugger;
+	// 		for (let j = 0; j < this.type.length; j++) {
+	// 			for (let i = 0; i < this.type[j].length; i++) {
+	// 				if (this.type[j][i] == '█') {
+	// 					let y = j + this.y;
 
+	// 					if (y >= rows) {
+	// 						this.type[j][i] = '*';
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	// POTENTIAL BUG ALERT: [j][i] should be [i][j]
+	moveDown(rowNumber) {
+		console.log("moved")
+
+		let cellNum = 0;
+		let highCellNum = 0;
+
+		// for every cell
 		for (let j = 0; j < this.type.length; j++) {
 			for (let i = 0; i < this.type[j].length; i++) {
 				if (this.type[j][i] == '█') {
-					let y = j + this.y;
+					cellNum++;
 
-					if (y >= rows) {
+					let celly = j + this.y;
+
+					// if cell's y is equal to the rowNumber
+					if (celly == rowNumber) {
+						// replace with air
+						this.type[j][i] = '*';
+
+						// if cell's y is less than rowNumber
+					} else if (celly < rowNumber) {
+						// go down - maybe
+						highCellNum++;
+					}
+				}
+			}
+		}
+
+		// if all the cells need to go down
+		if (highCellNum == cellNum) {
+			this.y++;
+			return;
+		}
+
+		// else if only some cells need to go down
+		// for every cell
+
+		// Bug solve -> loop from bottom to top
+		for (let j = this.type.length - 1; j >= 0; j--) {
+			for (let i = 0; i < this.type[j].length; i++) {
+				if (this.type[j][i] == '█') {
+					// if it needs to go down
+					let celly = j + this.y;
+					if (celly < rowNumber) {
+						// go down
+						this.type[j + 1][i] = this.type[j][i];
 						this.type[j][i] = '*';
 					}
 				}

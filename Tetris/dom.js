@@ -2,7 +2,7 @@ function setupDom() {
 	createElement('br')
 		.parent('#canvas');
 
-	let speed = createSlider(0, Math.sqrt(1024), Math.sqrt(256), 0.01)
+	let speed = createSlider(0, Math.sqrt(1024), Math.sqrt(moveInterval), 0.01)
 		.parent('#canvas')
 		.style('display', 'inline-block')
 		.style('width', '100%')
