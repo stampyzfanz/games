@@ -148,30 +148,6 @@ class Tetromino {
 		}
 	}
 
-	// moveDown(rowNumber) {
-	// 	if (this.y <= rowNumber) {
-	// 		this.y++;
-	// 		if (this.y >= this.rows) {
-	// 			// RIP
-	// 			kill(this.i);
-	// 			return;
-	// 		}
-
-	// 		for (let j = 0; j < this.type.length; j++) {
-	// 			for (let i = 0; i < this.type[j].length; i++) {
-	// 				if (this.type[j][i] == '█') {
-	// 					let y = j + this.y;
-
-	// 					if (y >= rows) {
-	// 						this.type[j][i] = '*';
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// POTENTIAL BUG ALERT: [j][i] should be [i][j]
 	moveDown(rowNumber) {
 		console.log("moved")
 

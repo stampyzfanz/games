@@ -3,8 +3,9 @@
 // Has explanation on what a tetromino is. I prefer the
 // simple wikipedia explanation.
 
+let debug = false;
 
-let w = 55; // width of each cell
+let w; // width of each cell
 let cols, rows;
 
 let grid = [];
@@ -13,9 +14,10 @@ let tetrominoes = [];
 let active_tetromino;
 
 // let moveInterval = 250;
-let moveInterval = 512;
+let moveInterval;
 // let moveInterval = 25;
 // let moveInterval = 5;
+
 
 function setup() {
 	// 20 by 10
@@ -37,11 +39,18 @@ function setup() {
 		}
 	}
 
+	w = debug ? 25 : 55;
+	moveInterval = debug ? 256 : 512;
+
+	if (debug) {
+		debugSetup();
+	}
+
 	findTetrominoTypes();
 	setupDom();
 }
 
-function debug() {
+function debugSetup() {
 	active_tetromino = null;
 	tetrominoes = [];
 
@@ -74,10 +83,12 @@ function update(updateLogic) {
 		}
 	}
 
-	if (updateLogic == "don't update the logic please") {
-		// active_tetromino.updateCells(false);
-	} else {
-		// active_tetromino.updateCells(true);
+	if (!debug) {
+		if (updateLogic == "don't update the logic please") {
+			active_tetromino.updateCells(false);
+		} else {
+			active_tetromino.updateCells(true);
+		}
 	}
 
 	checkAllRowsCleared();
@@ -150,5 +161,5 @@ function prettyType(type) {
 async function mySetInterval() {
 	update("update the logic pretty please");
 	await sleep(moveInterval);
-	mySetInterval();
+	mySetInterval(); // yay recusion :)
 }
