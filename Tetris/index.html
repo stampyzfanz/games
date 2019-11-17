@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" type="text/css" href="interface.css">
+
+	<title>Code!</title>
+
+	<script src="matrix.js"></script>
+	<script src="libraries/hsb.js"></script>
+	<script src="libraries/p5.js"></script>
+	<script src="libraries/p5.dom.js"></script>
+	<!-- <script src="libraries/p5.sound.js"></script> -->
+	<script src="sketch.js"></script>
+	<script src="cell.js"></script>
+	<script src="tetromino.js"></script>
+
+	<script type="text/javascript">
+		function sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
+	</script>
+</head>
+<body>
+	<div class="row">
+		<div id="canvas" class="column"></div>
+		<div class="column">
+			<h1>Welcome to tetris</h1>
+			<h2>Controls</h2>
+			<p>
+				<ul>
+					<li>Left arrow to move the active tetromino to the left, </li>
+					<li>Right arrow to move it to the right, </li>
+					<li>Down arrow to lower the it, </li>
+					<li>J to rotate it 90° to the left (anticlockwise), </li>
+					<li>K to rotate it 90° to the right (clockwise) </li>
+				</ul>
+			</p>
+			<h2>Gameplay</h2>
+			<p>
+				As per the simple <a href="https://simple.wikipedia.org/wiki/Tetris">wikipedia entry:</a>
+			</p>
+			<blockquote>
+				<i><b>Tetris</b></i> is a <a href="https://simple.wikipedia.org/wiki/Video_game" title="Video game">video game</a> developed in the <a href="https://simple.wikipedia.org/wiki/Soviet_Union" title="Soviet Union">Soviet Union</a> in <a href="https://simple.wikipedia.org/wiki/1984" title="1984">1984</a>.  The game has a simple goal of destroying lines of block before it reaches the top. The line is made up of of a square block.  Tetrominoes is the shape of the 4 connected blocks that falls vertically down. The player will have to use the tetrominos to create lines that fill the box horizontally, this will clear the lines of blocks. The game continues, the lines of blocks that is not completely filled will drop down as many lines that were cleared. The game has levels of difficulties which rises as the game is being played. 
+			</blockquote>
+		</div>
+	</div>
+</body>
+</html>
