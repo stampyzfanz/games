@@ -11,6 +11,10 @@ let cols, rows;
 let moveInterval;
 
 let players = [];
+let savedPlayers = [];
+
+// let TOTAL = 1000;
+let TOTAL = 2;
 
 async function setup() {
 	w = debug ? 55 : 25;
@@ -28,7 +32,7 @@ async function setup() {
 	cols = width / w;
 	rows = height / w;
 
-	for (let i = 0; i < 2; i++) {
+	for (let i = 0; i < TOTAL; i++) {
 		players[i] = new Player();
 	}
 
@@ -71,11 +75,18 @@ function update(updateLogic) {
 			if (updateLogic == "don't update the logic please") {
 				p.active_tetromino.updateCells(false);
 			} else {
+				p.think();
 				p.active_tetromino.updateCells(true);
+				p.checkIfDied();
+
+				if (players.length === 0) {
+					nextGeneration();
+				}
+
+				p.checkAllRowsCleared();
 			}
 		}
 
-		p.checkAllRowsCleared();
 	}
 }
 

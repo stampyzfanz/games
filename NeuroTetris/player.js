@@ -1,5 +1,17 @@
+function mutate(x) {
+	if (random(1) < 0.1) {
+		let offset = randomGaussian() * 0.5;
+		let newx = x + offset;
+		// console.log('mutate')
+		return newx;
+	} else {
+		return x;
+	}
+}
+
+
 class Player {
-	constructor() {
+	constructor(brain) {
 		this.grid = [];
 		this.tetrominoes = [];
 		this.active_tetromino;
@@ -13,6 +25,16 @@ class Player {
 			}
 		}
 
+		if (brain) {
+			this.brain = brain.copy();
+			this.brain.mutate(mutate);
+		} else {
+			this.brain = new NeuralNetwork(5, 8, 1);
+		}
+	}
+
+	copy() {
+		return new Player(this.brain);
 	}
 
 	reset() {
@@ -46,11 +68,18 @@ class Player {
 		this.points += cols;
 	}
 
-
-
 	checkAllRowsCleared() {
 		for (let row = 0; row < rows; row++) {
 			this.checkRowCleared(row);
 		}
+	}
+
+	think() {
+		let inputs = [];
+		let output = this.brain.predict(inputs);
+	}
+
+	delete(i) {
+		savedPlayer.push(players.splice(i, 1)[0]);
 	}
 }
