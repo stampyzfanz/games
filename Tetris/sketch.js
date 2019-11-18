@@ -153,6 +153,9 @@ function keyPressed() {
 		case DOWN_ARROW:
 			active_tetromino.move(0, 1);
 			break;
+		case UP_ARROW:
+			active_tetromino.rotate(1); // 90 degrees clockwise
+			break;
 	}
 
 	if (key == 'J') {
