@@ -1,0 +1,12 @@
+.row {
+	display: flex;
+}
+
+.column {
+	flex: 50%;
+}
+
+body {
+	background-color: #303030;
+	color: #d0d;
+}
