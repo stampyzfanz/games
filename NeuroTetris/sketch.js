@@ -12,13 +12,16 @@ let moveInterval;
 
 let players = [];
 let savedPlayers = [];
+let bestPlayer = null;
 
 // let TOTAL = 1000;
-let TOTAL = 2;
+let TOTAL = 50;
+
+let updateCount = 0;
 
 async function setup() {
 	w = debug ? 55 : 25;
-	moveInterval = debug ? 512 : 256;
+	moveInterval = debug ? 512 : 4;
 
 	// 20 by 10
 	// 20:10
@@ -36,6 +39,8 @@ async function setup() {
 		players[i] = new Player();
 	}
 
+	bestPlayer = players[0];
+
 	findTetrominoTypes();
 	setupDom();
 
@@ -46,38 +51,60 @@ function draw() {
 	background(0);
 
 	// for every player
-	for (let p of players) {
-		for (let c of p.grid) {
-			c.show();
-		}
+	// for (let p of players) {
+	// let p = players[0];
+	let p = bestPlayer;
 
-		fill(255, 0, 255);
-		textAlign(CENTER, CENTER);
-		textSize(32);
-		text(p.points, width / 2, height / 4);
+	if (bestPlayer.isDead) {
+		p = players[0];
 	}
+
+	for (let c of p.grid) {
+		c.show();
+	}
+
+	fill(255, 0, 255);
+	textAlign(CENTER, CENTER);
+	textSize(32);
+	text(p.points, width / 2, height / 4);
+	// }
+
 }
 
 function update(updateLogic) {
+	if (updateLogic) {
+		updateCount++;
+	}
+
 	// for every player
-	for (let p of players) {
+	// for (let p of players) {
+	players.forEach((p, i) => {
 		for (let c of p.grid) {
 			c.reset();
 		}
 
 		for (let t of p.tetrominoes) {
 			if (t !== p.active_tetromino) {
-				t.updateCells(false);
+				t.updateCells(false, false);
+			} else {
+				t.isGameOver2();
 			}
 		}
 
 		if (!debug) {
 			if (updateLogic == "don't update the logic please") {
-				p.active_tetromino.updateCells(false);
+				p.active_tetromino.updateCells(false, true);
 			} else {
+				p.active_tetromino.updateCells(true, true);
+				if (p.isDead) {
+					p.delete(i);
+				}
+
 				p.think();
-				p.active_tetromino.updateCells(true);
-				p.checkIfDied();
+
+				if (updateCount % 100 == 0) {
+					p.points++;
+				}
 
 				if (players.length === 0) {
 					nextGeneration();
@@ -86,33 +113,7 @@ function update(updateLogic) {
 				p.checkAllRowsCleared();
 			}
 		}
-
-	}
-}
-
-function keyPressed() {
-	for (let p of players) {
-		switch (keyCode) {
-			case LEFT_ARROW:
-				p.active_tetromino.move(-1, 0);
-				break;
-			case RIGHT_ARROW:
-				p.active_tetromino.move(1, 0);
-				break;
-			case DOWN_ARROW:
-				p.active_tetromino.move(0, 1);
-				break;
-		}
-
-		if (key == 'J') {
-			p.active_tetromino.rotate(3); // 90 degrees anti-clockwise
-		} else if (key == 'K') {
-			p.active_tetromino.rotate(1); // 90 degrees clockwise
-		}
-
-		// refrain from updating the logic
-		update("don't update the logic please");
-	}
+	});
 }
 
 function prettyType(type) {

@@ -19,6 +19,7 @@ class Cell {
 
 	reset() {
 		this.isUsed = false;
+		this.isActive = false;
 		this.whoUsed = -1;
 		this.col = [0, 0, 0];
 	}

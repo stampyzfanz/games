@@ -1,4 +1,5 @@
 let types = [];
+let randomTypeArr = [];
 
 function findTetrominoTypes() {
 	for (let i = 1; i < 8; i++) {
@@ -8,27 +9,43 @@ function findTetrominoTypes() {
 		} else {
 			type = loadStrings('Tetromino/7.txt', type => {
 				prettyType(type);
+
+
+				for (let i = 0; i < 100; i++) {
+					type = floor(random(types.length));
+					let width = types[type][0].length;
+					let x = floor(random(cols - width));
+					randomTypeArr[i] = [width, x];
+				}
+
 				// for every player
 				for (let p of players) {
 					pickTetromino(p);
 				}
 				// window.setInterval(update, moveInterval);
 				mySetInterval();
+
 			});
 		}
 	}
 }
 
 function pickTetromino(player) {
-	type = floor(random(types.length));
-	let width = types[type][0].length;
-	let x = floor(random(cols - width));
+	let type, width, x;
+	if (player.tetrominoNum >= randomTypeArr) {
+		type = floor(random(types.length));
+		width = types[type][0].length;
+		x = floor(random(cols - width));
+	} else {
+		type = randomTypeArr[player.tetrominoNum][0];
+		x = randomTypeArr[player.tetrominoNum][1];
+	}
 
 	player.active_tetromino = new Tetromino(x, type,
 		player.tetrominoes.length + 1, player);
 	player.tetrominoes.push(player.active_tetromino);
-	player.active_tetromino.isGameOver();
-	player.active_tetromino.updateCells();
+	player.active_tetromino.isGameOver1();
+	player.active_tetromino.updateCells(false, true);
 }
 
 function kill(i, player) {
@@ -48,26 +65,36 @@ class Tetromino {
 		this.col = getRandomColour();
 
 		this.player = player;
+		this.player.tetrominoNum++;
 	}
 
-	isGameOver() {
+	isGameOver1() {
+		let anyBlank = true;
 		for (let j = 0; j < this.type.length; j++) {
 			for (let i = 0; i < this.type[j].length; i++) {
 				if (this.type[j][i] == '█') {
+					anyBlank = false;
+
 					let x = i + this.x;
 					let y = j + this.y;
 
 					if (this.player.grid[index(x, y)].isUsed) {
 						// Game over
 
-						this.player.reset();
+						this.player.isDead = true;
 					}
 				}
 			}
 		}
 	}
 
-	updateCells(ifUpdateY) {
+	isGameOver2() {
+		if (this.y > rows + 1) {
+			this.player.isDead = true;
+		}
+	}
+
+	updateCells(ifUpdateY, isActive) {
 		if (ifUpdateY) {
 			// check that there isn't another tetromino or the bottom 
 			// of the screen that it would fall through
@@ -98,6 +125,9 @@ class Tetromino {
 					// console.log(x, y)
 					this.player.grid[index(x, y)].col = this.col;
 					this.player.grid[index(x, y)].isUsed = true;
+					if (isActive) {
+						this.player.grid[index(x, y)].isActive = true;
+					}
 					this.player.grid[index(x, y)].whoUsed = this.i;
 				}
 			}
