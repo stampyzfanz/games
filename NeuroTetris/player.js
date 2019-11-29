@@ -31,7 +31,14 @@ class Player {
 			this.brain = brain.copy();
 			this.brain.mutate(mutate);
 		} else {
-			this.brain = new NeuralNetwork(rows * cols * 3, 20, 6);
+			switch (nn_input_type) {
+				case 0:
+					this.brain = new NeuralNetwork(rows * cols * 3, 20, 6);
+					break;
+				case 1:
+					this.brain = new NeuralNetwork(cols + 7 + 2, 1, 6);
+					break;
+			}
 		}
 	}
 
@@ -77,14 +84,25 @@ class Player {
 	}
 
 	think() {
-		// input is one hot vector
-		// 0 symbolises unused cell
-		// 1 symbolises used cell
-		// 2 symbolises cell that the network can control
+		// input depends on the hardcoded value at the start
+
+		// for the first one:
+		// 	input is one hot vector
+		// 	0 symbolises unused cell
+		// 	1 symbolises used cell
+		// 	2 symbolises cell that the network can control
+
+		// for the 2nd one:
+		// 	Input 1: one hot vector of tetromino shape
+		// 	Input 2 - 3: x and y of tetromino
+		// 	Input 4 - 15? maybe: pass in the y value of the highest 
+		// 		cell in col 0 that is used and isnt acive. Do this
+		// 		for every other col
 
 
 
-		let inputs = [];
+
+		let grid = [];
 		this.grid.forEach((cell, i) => {
 			let input = [1, 0, 0];
 
@@ -97,20 +115,61 @@ class Player {
 				input = [0, 0, 1];
 			}
 
-			inputs.push(input);
+			grid.push(input);
 		});
 
-		inputs = inputs.flat(3);
+		let inputs = [];
+		switch (nn_input_type) {
+			case 0:
+				inputs = grid;
+				inputs = inputs.flat(3);
+				break;
+			case 1:
+				let t = this.active_tetromino;
+
+				// Input 1: one hot vector of tetromino shape
+				inputs[0] = new Array(7).fill(0)
+				inputs[0][t.typeIndex] = 1;
+
+				// Input 2 - 3: x and y of tetromino
+				inputs[1] = [t.x, t.y];
+
+				// Input 4 - 15? maybe: pass in the y value of the highest 
+				// 	cell in col 0 that is used and isnt acive. Do this
+				// 	for every other col
+				for (let i = 0; i < cols; i++) {
+					let input = 0;
+					for (let j = 0; j < rows; j++) {
+						// if the cell is used
+						if (grid[index(i, j)][1]) {
+							input = j;
+							break;
+						}
+
+						if (typeof input == Number) {
+							console.error('Bug: Break didn\'t work');
+						}
+					}
+
+					inputs.push(input);
+				}
+
+				inputs = inputs.flat(1);
+				break;
+		}
 
 		// console.log(inputs);
 
-		let outputs = this.brain.predict(inputs);
+		testInputs = inputs;
+		// let outputs = this.brain.predict(inputs);
 		// console.log(outputs);
 
-		let maxOutputIndex = outputs.indexOf(Math.max(...outputs));
+		// let maxOutputIndex = outputs.indexOf(Math.max(...outputs));
 		// console.log(maxOutputIndex);
+		let maxOutputIndex = 1;
 
 		this.moveActiveTetromino(maxOutputIndex);
+
 	}
 
 	delete(i) {
@@ -139,6 +198,5 @@ class Player {
 				break;
 		}
 		// refrain from updating the logic
-		update("don't update the logic please");
 	}
 }

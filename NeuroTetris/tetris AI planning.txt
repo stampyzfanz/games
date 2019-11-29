@@ -25,4 +25,23 @@ My hypothesis:
 		rotate left
 		rotate right
 	]
-	
+
+After testing:
+	Too many inputs - computer is lagging
+	Also means pop is too low
+
+My new hypothesis:
+	Less inputs
+	Same outputs
+
+	Population of 1000
+
+	Input 1: one hot vector of tetromino shape
+	Input 2-3: x and y of tetromino
+	Input 4 - a bunch: pass in the y value of the highest cell in col 0 that is used and isnt acive. Do this for every other col
+
+	10 ish inputs
+
+	maybe 50 hidden idk
+
+

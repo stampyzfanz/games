@@ -3,7 +3,7 @@
 // Has explanation on what a tetromino is. I prefer the
 // simple wikipedia explanation.
 
-let debug = false;
+let testInputs = null;
 
 let w; // width of each cell
 let cols, rows;
@@ -19,9 +19,22 @@ let TOTAL = 50;
 
 let updateCount = 0;
 
+const nn_input_type = 1;
+
+let loop = true;
+
 async function setup() {
-	w = debug ? 55 : 25;
-	moveInterval = debug ? 512 : 4;
+	w = 25;
+	moveInterval = 4;
+
+	switch (nn_input_type) {
+		case 0:
+			TOTAL = 50;
+			break;
+		case 1:
+			TOTAL = 150;
+			break;
+	}
 
 	// 20 by 10
 	// 20:10
@@ -91,27 +104,25 @@ function update(updateLogic) {
 			}
 		}
 
-		if (!debug) {
-			if (updateLogic == "don't update the logic please") {
-				p.active_tetromino.updateCells(false, true);
-			} else {
-				p.active_tetromino.updateCells(true, true);
-				if (p.isDead) {
-					p.delete(i);
-				}
-
-				p.think();
-
-				if (updateCount % 100 == 0) {
-					p.points++;
-				}
-
-				if (players.length === 0) {
-					nextGeneration();
-				}
-
-				p.checkAllRowsCleared();
+		if (updateLogic == "don't update the logic please") {
+			p.active_tetromino.updateCells(false, true);
+		} else {
+			p.active_tetromino.updateCells(true, true);
+			if (p.isDead) {
+				p.delete(i);
 			}
+
+			p.think();
+
+			if (updateCount % 100 == 0) {
+				p.points++;
+			}
+
+			if (players.length === 0) {
+				nextGeneration();
+			}
+
+			p.checkAllRowsCleared();
 		}
 	});
 }
@@ -124,7 +135,9 @@ function prettyType(type) {
 }
 
 async function mySetInterval() {
-	update("update the logic pretty please");
+	if (loop) {
+		update("update the logic pretty please");
+	}
 	await sleep(moveInterval);
 	mySetInterval(); // yay recusion :)
 }
