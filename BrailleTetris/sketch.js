@@ -68,6 +68,16 @@ function draw() {
 	textAlign(CENTER, CENTER);
 	textSize(32);
 	text(points, width / 2, height / 4);
+
+	if (paused) {
+		fill(0, 150);
+		rect(0, 0, width, height);
+
+		stroke(255);
+		fill(255, 255, 0);
+		text('Type the word into the text input below to continue \
+			to the next word', 10, height / 6, width - 10, height / 2);
+	}
 }
 
 function update(updateLogic) {

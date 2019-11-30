@@ -6,8 +6,7 @@ function pickWord() {
 
 function nextTetromino() {
 	if (wordCharIndex >= word.length) {
-		// TODO
-		pickWord();
+		paused = true;
 		return;
 	}
 
@@ -36,6 +35,7 @@ class Tetromino {
 
 		this.col = getRandomColour();
 
+		// https://en.wikipedia.org/wiki/Braille_Patterns
 		this.letter = word[wordCharIndex];
 		let binArr = brailleChar
 			.charCodeAt(0)
@@ -44,9 +44,9 @@ class Tetromino {
 			.split('')
 			// find last 6 digits
 			.slice(-6);
-		// eg. TODO give eaxmple
+		// eg. ["0", "0", "1", "1", "1", "0"] for s
 
-		// console.log(binArr);
+		console.log(binArr);
 		// console.log(this.letter);
 
 		this.type = [];

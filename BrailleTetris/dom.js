@@ -1,6 +1,38 @@
 function setupDom() {
-	createElement('br')
+	function br() {
+		createElement('br')
+			.parent('#canvas');
+	}
+
+	function space() {
+		createP('&nbsp'.repeat(4))
+			.style('display', 'inline-block')
+			.parent('#canvas');
+	}
+
+	br();
+
+
+	let explanation1 = createP('What is the word spelt in braille by the tetrominoes? ')
+		.style('display', 'inline-block')
 		.parent('#canvas');
+
+	space();
+
+	let userGuessedWord = createInput('')
+		.parent('#canvas')
+		.style('display', 'inline-block')
+		.changed(() => {
+			// only let the user guess if the word is finished
+			if (paused) {
+				console.log('word guessed');
+				if (userGuessedWord.value() == word) {
+					points += word.length * 10;
+				}
+				pickWord();
+				paused = false;
+			}
+		});
 
 	let speed = createSlider(0, Math.sqrt(1024), Math.sqrt(moveInterval), 0.01)
 		.parent('#canvas')
@@ -8,16 +40,13 @@ function setupDom() {
 		.style('width', '100%')
 		.input(_ => moveInterval = speed.value() ** 2);
 
-	let space = createP('&nbsp'.repeat(4))
+	space();
+
+	let explanation2 = createP('Speed of the tetrominoes falling')
 		.style('display', 'inline-block')
 		.parent('#canvas');
 
-	let explanation = createP('Speed of the tetrominoes falling')
-		.style('display', 'inline-block')
-		.parent('#canvas');
-
-	createElement('br')
-		.parent('#canvas');
+	br();
 
 	let resetBtn = createButton('reset')
 		.mousePressed(reset)
