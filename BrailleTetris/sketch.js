@@ -3,9 +3,7 @@
 // Has explanation on what a tetromino is. I prefer the
 // simple wikipedia explanation.
 
-let debug = false;
-
-let w; // width of each cell
+let w = 25; // width of each cell
 let cols, rows;
 
 let grid = [];
@@ -13,14 +11,26 @@ let grid = [];
 let tetrominoes = [];
 let active_tetromino;
 
-let moveInterval;
+let moveInterval = 1024;
 
 let points = 0;
 
-async function setup() {
-	w = debug ? 55 : 25;
-	moveInterval = debug ? 512 : 256;
+let paused = false;
 
+let words = [];
+let word;
+// where the player is up to. 
+// eg if word was 'cat' and the player was still on the c
+// then wordCharIndex would be 0
+let wordCharIndex;
+
+function preload() {
+	let googlefile = loadStrings('google.txt', data => {
+		words = data;
+	});
+}
+
+async function setup() {
 	// 20 by 10
 	// 20:10
 	// 10:5
@@ -40,34 +50,11 @@ async function setup() {
 		}
 	}
 
-	findTetrominoTypes();
 	setupDom();
+	pickWord();
 
 	await sleep(500);
-
-	if (debug) {
-		debugSetup();
-	}
-}
-
-function debugSetup() {
-	active_tetromino = null;
-	tetrominoes = [];
-
-	// flat
-	let t = new Tetromino(0, 0, 0);
-	t.y = rows - 1 - 1;
-	tetrominoes.push(t);
-
-	t = new Tetromino(0, 0, 1);
-	t.y = rows - 1;
-	tetrominoes.push(t);
-
-	// edge
-	t = new Tetromino(3, 5, 2);
-	t.rotate(3);
-	t.y = rows - 3 - 1;
-	tetrominoes.push(t);
+	mySetInterval();
 }
 
 function draw() {
@@ -94,12 +81,10 @@ function update(updateLogic) {
 		}
 	}
 
-	if (!debug) {
-		if (updateLogic == "don't update the logic please") {
-			active_tetromino.updateCells(false);
-		} else {
-			active_tetromino.updateCells(true);
-		}
+	if (updateLogic == "don't update the logic please") {
+		active_tetromino.updateCells(false);
+	} else {
+		active_tetromino.updateCells(true);
 	}
 
 	checkAllRowsCleared();
@@ -112,7 +97,7 @@ function reset() {
 
 	active_tetromino = null;
 	tetrominoes = [];
-	pickTetromino();
+	nextTetromino();
 
 	points = 0;
 }
@@ -168,15 +153,11 @@ function keyPressed() {
 	update("don't update the logic please");
 }
 
-function prettyType(type) {
-	for (let j = 0; j < type.length; j++) {
-		type[j] = type[j].split('');
-	}
-	types.push(type);
-}
-
 async function mySetInterval() {
-	update("update the logic pretty please");
+	// TODO
+	if (!paused) {
+		update("update the logic pretty please");
+	}
 	await sleep(moveInterval);
 	mySetInterval(); // yay recusion :)
 }
