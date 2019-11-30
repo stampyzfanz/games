@@ -46,7 +46,7 @@ class Tetromino {
 			.slice(-6);
 		// eg. ["0", "0", "1", "1", "1", "0"] for s
 
-		console.log(binArr);
+		// console.log(binArr);
 		// console.log(this.letter);
 
 		this.type = [];
@@ -103,7 +103,6 @@ class Tetromino {
 					let x = i + this.x;
 					let y = j + this.y;
 
-					// console.log(x, y)
 					grid[index(x, y)].col = this.col;
 					grid[index(x, y)].isUsed = true;
 					grid[index(x, y)].whoUsed = this.i;

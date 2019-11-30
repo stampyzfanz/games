@@ -10,6 +10,10 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [x] If the player gets the word right, the player gets the 10 points per letter
 - [] If player gets it right play happy sound effect; if not play sad sound effect
 
+## QOL
+- [] 5 secs between tetrominoes - I gave up - too hard
+- [x] correct answer and whether or not you are right gets written down somewhere
+
 ## Goals
 - [x] Find list of words to use
 - [] Find list of movie quotes to use

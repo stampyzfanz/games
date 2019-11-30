@@ -26,13 +26,23 @@ function setupDom() {
 			// only let the user guess if the word is finished
 			if (paused) {
 				console.log('word guessed');
+				feedback.style('display', 'inline-block');
 				if (userGuessedWord.value() == word) {
 					points += word.length * 10;
+					feedback.html('You are correct');
+				} else {
+					feedback.html(`You guessed ${userGuessedWord.value()}\
+						but the correct word was ${word}`);
 				}
 				pickWord();
 				paused = false;
 			}
 		});
+
+	// feedback to user
+	let feedback = createP('')
+		.style('display', 'none')
+		.parent('#canvas');
 
 	let speed = createSlider(0, Math.sqrt(1024), Math.sqrt(moveInterval), 0.01)
 		.parent('#canvas')
