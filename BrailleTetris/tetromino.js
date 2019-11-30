@@ -86,6 +86,13 @@ class Tetromino {
 				// Pick another
 				nextTetromino();
 			}
+
+
+			// bit of a duck tape solution to the thing 
+			// falling off the board
+			if (this.y > rows + 5) {
+				nextTetromino();
+			}
 		}
 
 
