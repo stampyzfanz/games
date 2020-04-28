@@ -1,10 +1,15 @@
 let popSize = 100;
 let bubbles = [];
+let isFlocking;
 
 function setup() {
 	createCanvas(800, 600);
 
 	initialise();
+	flocking_simulation_setup();
+
+	isFlocking = createCheckbox('Flocking simulation', false)
+		.changed(initialise);
 }
 
 function initialise() {
@@ -30,8 +35,10 @@ function draw() {
 			if (other.id != bubbles[i].id) {
 				// is touching
 				if (other.isTouching(bubbles[i])) {
-					other.vel.mult(-1);
-					bubbles[i].vel.mult(-1);
+					if (!(isFlocking.checked())) {
+						other.vel.mult(-1);
+						bubbles[i].vel.mult(-1);
+					}
 
 					// If either are infected, infect the other.
 					if (other.mode == 'Infected' ||
@@ -48,8 +55,13 @@ function draw() {
 			}
 
 		}
+
 		bubbles[i].edges();
 		bubbles[i].update();
 		bubbles[i].show();
+
+		if (isFlocking.checked()) {
+			bubbles[i].flock(bubbles);
+		}
 	}
 }
