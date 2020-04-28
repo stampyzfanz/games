@@ -19,6 +19,7 @@ class Bubble {
 	}
 
 	show() {
+		noStroke();
 		if (this.mode == 'Infected') {
 			fill(255, 0, 0);
 		} else if (this.mode == 'Normal') {
@@ -26,7 +27,7 @@ class Bubble {
 		} else if (this.mode == 'Recovered') {
 			fill(255, 192, 248);
 		}
-		ellipse(this.pos.x, this.pos.y, this.r);
+		ellipse(this.pos.x, this.pos.y, 2 * this.r);
 	}
 
 	isTouching(other) {
@@ -34,7 +35,7 @@ class Bubble {
 	}
 
 	edges() {
-		if (this.pos.x < 0 || this.pos.x > width) this.vel.x = this.vel.x * -1;
-		if (this.pos.y < 0 || this.pos.y > height) this.vel.y = this.vel.y * -1;
+		if (this.pos.x < this.r || this.pos.x > width - this.r) this.vel.x = this.vel.x * -1;
+		if (this.pos.y < this.r || this.pos.y > height - this.r) this.vel.y = this.vel.y * -1;
 	}
 }

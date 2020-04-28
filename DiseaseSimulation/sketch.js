@@ -4,13 +4,18 @@ let bubbles = [];
 function setup() {
 	createCanvas(800, 600);
 
+	initialise();
+}
+
+function initialise() {
+	bubbles = [];
 	for (let i = 0; i < popSize; i++) {
 		let pos = createVector(random(width), random(height));
 		let vel = p5.Vector.random2D().mult(2);
 		if (i == 0) {
-			bubbles[i] = new Bubble(pos, vel, 10, 'Infected', i);
+			bubbles[i] = new Bubble(pos, vel, 5, 'Infected', i);
 		} else {
-			bubbles[i] = new Bubble(pos, vel, 10, 'Normal', i);
+			bubbles[i] = new Bubble(pos, vel, 5, 'Normal', i);
 		}
 	}
 }
@@ -31,8 +36,6 @@ function draw() {
 					// If either are infected, infect the other.
 					if (other.mode == 'Infected' ||
 						bubbles[i].mode == 'Infected') {
-						// other.infect();
-						// bubbles[i].infect();
 						if (other.mode == 'Normal') {
 							other.mode = 'Infected';
 						}
