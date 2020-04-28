@@ -2,7 +2,6 @@
 
 function flocking_simulation_setup() {
 	let extension = Bubble;
-	createElement('br');
 
 	createP('Alignment slider &nbsp&nbsp&nbsp').style('display', 'inline-block');
 	let alignSlider = createSlider(0, 5, 1, 0.1);

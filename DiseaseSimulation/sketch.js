@@ -1,9 +1,17 @@
 let popSize = 100;
 let bubbles = [];
 let isFlocking;
+let movingPercent;
 
 function setup() {
 	createCanvas(800, 600);
+
+	createElement('br');
+	createP('How many birds can move? &nbsp&nbsp&nbsp')
+		.style('display', 'inline-block');
+	movingPercent = createSlider(0, 1, 1, 0.05)
+		.changed(initialise);
+	createElement('br');
 
 	initialise();
 	flocking_simulation_setup();
@@ -16,7 +24,14 @@ function initialise() {
 	bubbles = [];
 	for (let i = 0; i < popSize; i++) {
 		let pos = createVector(random(width), random(height));
-		let vel = p5.Vector.random2D().mult(2);
+
+		let vel;
+		if (random() > movingPercent.value()) {
+			vel = createVector(0, 0);
+		} else {
+			vel = p5.Vector.random2D().mult(2);
+		}
+
 		if (i == 0) {
 			bubbles[i] = new Bubble(pos, vel, 5, 'Infected', i);
 		} else {

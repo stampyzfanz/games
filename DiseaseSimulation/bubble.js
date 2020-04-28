@@ -9,7 +9,7 @@ class Bubble {
 		this.r = r;
 
 		this.maxForce = 0.2;
-		this.maxSpeed = random(2, 4);
+		this.maxSpeed = this.vel.mag();
 	}
 
 	update() {
