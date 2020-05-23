@@ -31,7 +31,7 @@ class Player {
 			this.genes = genes.mutate(mutate);
 		} else {
 			// TODO: STARTING GENES
-			this.genes = [];
+			this.genes = [random(-1, 1), random(-1, 1), random(-1, 1), random(-1, 1)];
 		}
 	}
 
@@ -89,12 +89,43 @@ class Player {
 	}
 
 	think() {
-		// TODO: THINK
+		// go thru every combination of orientation and position of tetrominoes
+		clone = {
+			...this
+		};
 
-		// let maxOutputIndex = outputs.indexOf(Math.max(...outputs));
-		// console.log(maxOutputIndex);
+		let bestScore = 0;
+		let bestPosition = null;
 
-		// this.moveActiveTetromino(maxOutputIndex);
+		this.active_tetromino.x = 0;
+		let x = 0;
+		// try to put it in every position from left to right
+		while (clone.canMove(x, 0)) {
+			// go down to the bottommost place it can
+			clone.move(x, 0);
+			while (clone.canMove(0, -1)) {
+				clone.move(0, -1);
+			}
+
+			// its at the bottom now look at its score
+			let score = this.genes[0] * clone.aggregateLines(clone.grid) +
+				this.genes[1] * clone.completedLines(clone.grid) +
+				this.genes[2] * holes.holes(clone.grid) +
+				this.genes[3] * clone.bumpiness(clone.grid);
+
+			if (score > bestScore) {
+				bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y];
+				bestScore = score;
+			}
+
+			clone = {
+				...this
+			};
+			x++;
+		}
+
+		this.active_tetromino.x = bestPosition.x;
+		this.active_tetromino.y = bestPosition.y;
 	}
 
 	getMaxYs() {

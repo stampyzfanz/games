@@ -8,13 +8,16 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [x] Measure complete lines
 - [x] Measure holes
 - [x] Measure bumpiness
-- [] Use takes these measurements for every orientation of every position of the tetromino.
-- [] Times these values by weights determined by GA
+- [x] Use takes these measurements for every orientation of every position of the tetromino.
+- [x] Times these values by weights determined by GA
 - [] Try to visualise it somehow
 
 ## Goals
 - [x] Remove NN code
-- [] Do algorithms for the measurements
-- [] Make GA
+- [x] Do algorithms for the measurements
+- [x] Make GA
+
+## Bugs
+- [] Does it work?
 
 
