@@ -87,5 +87,5 @@ function pickOne(players) {
 	// (this includes mutation)
 	// console.log(birds);
 	// console.log(birds[index]);
-	return players[index].copy();
+	return players[index].genes;
 }

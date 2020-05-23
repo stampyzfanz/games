@@ -75,10 +75,26 @@ class Player {
 	think() {
 		// TODO: THINK
 
-		let maxOutputIndex = outputs.indexOf(Math.max(...outputs));
+		// let maxOutputIndex = outputs.indexOf(Math.max(...outputs));
 		// console.log(maxOutputIndex);
 
-		this.moveActiveTetromino(maxOutputIndex);
+		// this.moveActiveTetromino(maxOutputIndex);
+	}
+
+	aggregateLines() {
+		// the max y for each x
+		let maxYs = {}
+
+		for (let c of this.grid) {
+			// if its bigger than the one in the obj or if its not in the obj
+			if (c.y > maxYs.x || !(c.x in maxYs)) {
+				maxYs[c.x] = c.y;
+			}
+		}
+
+		// per https://stackoverflow.com/questions/16449295/
+		// how-to-sum-the-values-of-a-javascript-object
+		return Object.values(obj).reduce((a, b) => a + b);
 	}
 
 	delete(i) {

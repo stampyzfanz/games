@@ -4,7 +4,7 @@
 To put into writing what I want to do with this game so that I don't overengineer it and my plan is clear and straightforward
 
 ## Gameplan for NeuroTetris
-- [] Measure aggregate height (Sum of all column heights)
+- [x] Measure aggregate height (Sum of all column heights)
 - [] Measure complete lines
 - [] Measure holes
 - [] Measure bumpiness
