@@ -47,6 +47,22 @@ class Player {
 	// 	this.points = 0;
 	// }
 
+	ifRowCleared(rowNumber, grid) {
+		if (!(grid)) grid = this.grid;
+
+		// checks the bottom row to see if it is all full
+		// let y = rows - 1;
+		let y = rowNumber;
+
+		for (let x = 0; x < cols; x++) {
+			if (!(this.grid[index(x, y)].isUsed)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	checkRowCleared(rowNumber) {
 		// checks the bottom row to see if it is all full
 		// let y = rows - 1;
@@ -81,20 +97,59 @@ class Player {
 		// this.moveActiveTetromino(maxOutputIndex);
 	}
 
-	aggregateLines() {
+	getMaxYs() {
 		// the max y for each x
 		let maxYs = {}
 
-		for (let c of this.grid) {
+		for (let c of grid) {
 			// if its bigger than the one in the obj or if its not in the obj
 			if (c.y > maxYs.x || !(c.x in maxYs)) {
 				maxYs[c.x] = c.y;
 			}
 		}
+	}
 
+	aggregateLines(grid) {
 		// per https://stackoverflow.com/questions/16449295/
 		// how-to-sum-the-values-of-a-javascript-object
-		return Object.values(obj).reduce((a, b) => a + b);
+		return Object.values(getMaxYs()).reduce((a, b) => a + b);
+	}
+
+	completedLines(grid) {
+		let completedLines = 0;
+
+		for (let row = 0; row < rows; row++) {
+			if (this.ifRowCleared(row, grid)) completedLines++;
+		}
+
+		return completedLines;
+	}
+
+	holes(grid) {
+		let maxYs = this.getMaxYs(grid);
+
+		let holes = 0;
+		for (let c of grid) {
+			if (c.y < maxYs[x]) {
+				holes++;
+			}
+		}
+
+		return holes;
+	}
+
+	bumpiness(grid) {
+		let maxYs = this.getMaxYs();
+
+		let bumpiness = 0;
+		for (let i = 1; i < cols.length; i++) {
+			let col = maxYs.hasOwnproperty(i) ? maxYs[i] : 0;
+			let prevcol = maxYs.hasOwnproperty(i) ? maxYs[i] : 0;
+
+			bumpiness += abs(col - prevcol);
+		}
+
+		return bumpiness;
 	}
 
 	delete(i) {
