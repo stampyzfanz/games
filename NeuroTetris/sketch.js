@@ -3,7 +3,7 @@
 // Has explanation on what a tetromino is. I prefer the
 // simple wikipedia explanation.
 
-let debug = false;
+let debug = true;
 
 let w; // width of each cell
 let cols, rows;
@@ -22,6 +22,7 @@ let updateCount = 0;
 async function setup() {
 	w = debug ? 55 : 25;
 	moveInterval = debug ? 512 : 4;
+	TOTAL = debug ? 1 : TOTAL;
 
 	// 20 by 10
 	// 20:10

@@ -90,45 +90,48 @@ class Player {
 
 	think() {
 		// go thru every combination of orientation and position of tetrominoes
-		clone = {
-			...this
-		};
+		let clone = deepclone(this);
 
-		let bestScore = 0;
+		let bestScore = -Infinity;
 		let bestPosition = null;
 
 		this.active_tetromino.x = 0;
-		let x = 0;
-		// try to put it in every position from left to right
-		while (clone.canMove(x, 0)) {
-			// go down to the bottommost place it can
-			clone.move(x, 0);
-			while (clone.canMove(0, -1)) {
-				clone.move(0, -1);
+		// every combination of thing thingy
+		for (let i = 0; i < 4; i++) {
+			let x = 0;
+			// try to put it in every position from left to right
+			while (clone.active_tetromino.canMove(x, 0)) {
+				// go down to the bottommost place it can
+				clone.active_tetromino.rotate(i);
+				clone.active_tetromino.move(x, 0);
+				while (clone.active_tetromino.canMove(0, -1)) {
+					clone.active_tetromino.move(0, -1);
+				}
+
+				// its at the bottom now look at its score
+				// debugger;
+				let score = this.genes[0] * clone.aggregateLines(clone.grid) +
+					this.genes[1] * clone.completedLines(clone.grid) +
+					this.genes[2] * clone.holes(clone.grid) +
+					this.genes[3] * clone.bumpiness(clone.grid);
+
+				if (score > bestScore) {
+					bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y];
+					bestScore = score;
+				}
+
+				// in clone lib
+				clone = deepclone(this);
+				x++;
 			}
-
-			// its at the bottom now look at its score
-			let score = this.genes[0] * clone.aggregateLines(clone.grid) +
-				this.genes[1] * clone.completedLines(clone.grid) +
-				this.genes[2] * holes.holes(clone.grid) +
-				this.genes[3] * clone.bumpiness(clone.grid);
-
-			if (score > bestScore) {
-				bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y];
-				bestScore = score;
-			}
-
-			clone = {
-				...this
-			};
-			x++;
 		}
 
-		this.active_tetromino.x = bestPosition.x;
-		this.active_tetromino.y = bestPosition.y;
+		let x = bestPosition[0];
+		let y = bestPosition[1];
+		this.active_tetromino.move(x, y);
 	}
 
-	getMaxYs() {
+	getMaxYs(grid) {
 		// the max y for each x
 		let maxYs = {}
 
@@ -138,12 +141,14 @@ class Player {
 				maxYs[c.x] = c.y;
 			}
 		}
+
+		return maxYs;
 	}
 
 	aggregateLines(grid) {
 		// per https://stackoverflow.com/questions/16449295/
 		// how-to-sum-the-values-of-a-javascript-object
-		return Object.values(getMaxYs()).reduce((a, b) => a + b);
+		return Object.values(this.getMaxYs(grid)).reduce((a, b) => a + b);
 	}
 
 	completedLines(grid) {
@@ -161,7 +166,7 @@ class Player {
 
 		let holes = 0;
 		for (let c of grid) {
-			if (c.y < maxYs[x]) {
+			if (c.y < maxYs[c.x]) {
 				holes++;
 			}
 		}
@@ -170,7 +175,7 @@ class Player {
 	}
 
 	bumpiness(grid) {
-		let maxYs = this.getMaxYs();
+		let maxYs = this.getMaxYs(grid);
 
 		let bumpiness = 0;
 		for (let i = 1; i < cols.length; i++) {
