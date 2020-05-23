@@ -11,7 +11,7 @@ function mutate(x) {
 
 
 class Player {
-	constructor(brain) {
+	constructor(genes) {
 		this.grid = [];
 		this.tetrominoes = [];
 		this.active_tetromino;
@@ -27,16 +27,12 @@ class Player {
 			}
 		}
 
-		if (brain) {
-			this.brain = brain.copy();
-			this.brain.mutate(mutate);
+		if (genes) {
+			this.genes = genes.mutate(mutate);
 		} else {
-			this.brain = new NeuralNetwork(rows * cols * 3, 20, 6);
+			// TODO: STARTING GENES
+			this.genes = [];
 		}
-	}
-
-	copy() {
-		return new Player(this.brain);
 	}
 
 	// reset() {
@@ -77,35 +73,7 @@ class Player {
 	}
 
 	think() {
-		// input is one hot vector
-		// 0 symbolises unused cell
-		// 1 symbolises used cell
-		// 2 symbolises cell that the network can control
-
-
-
-		let inputs = [];
-		this.grid.forEach((cell, i) => {
-			let input = [1, 0, 0];
-
-
-			if (cell.isUsed) {
-				input = [0, 1, 0];
-			}
-
-			if (cell.isActive) {
-				input = [0, 0, 1];
-			}
-
-			inputs.push(input);
-		});
-
-		inputs = inputs.flat(3);
-
-		// console.log(inputs);
-
-		let outputs = this.brain.predict(inputs);
-		// console.log(outputs);
+		// TODO: THINK
 
 		let maxOutputIndex = outputs.indexOf(Math.max(...outputs));
 		// console.log(maxOutputIndex);

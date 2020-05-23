@@ -13,7 +13,7 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [] Try to visualise it somehow
 
 ## Goals
-- [] Remove NN code
+- [x] Remove NN code
 - [] Do algorithms for the measurements
 - [] Make GA
 
