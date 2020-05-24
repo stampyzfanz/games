@@ -19,7 +19,8 @@ class Player {
 			this.genes = genes;
 		} else {
 			// TODO: STARTING GENES
-			this.genes = [random(-1, 1), random(-1, 1), random(-1, 1), random(-1, 1)];
+			// this.genes = [random(-1, 1), random(-1, 1), random(-1, 1), random(-1, 1)]; 
+			this.genes = [-0.510066, 0.760666, -0.35663, -0.184483];
 		}
 	}
 
@@ -103,11 +104,13 @@ class Player {
 						clone.active_tetromino.move(0, 1, this);
 					}
 
+					if (stop) debugger;
 					// its at the bottom now look at its score
 					let score = this.genes[0] * clone.aggregateLines(clone.grid) +
 						this.genes[1] * clone.completedLines(clone.grid) +
 						this.genes[2] * clone.holes(clone.grid) +
 						this.genes[3] * clone.bumpiness(clone.grid);
+					if (stop) debugger;
 
 					if (score > bestScore) {
 						bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y, i];
@@ -171,7 +174,8 @@ class Player {
 		// it cant do -1 (-90 degrees) due to naive rotation algorithm, 
 		// just do it 3 (270 degrees)
 		this.active_tetromino.desiredRotation += constrained;
-		this.active_tetromino.rotate(constrained == 1 ? 1 : 3, this);
+		if (constrained == -1) constrained = 3
+		this.active_tetromino.rotate(constrained, this);
 
 		update(false);
 	}
@@ -181,9 +185,12 @@ class Player {
 		let maxYs = {}
 
 		for (let c of grid) {
-			// if its bigger than the one in the obj or if its not in the obj
-			if (c.y > maxYs.x || !(c.x in maxYs)) {
-				maxYs[c.x] = c.y;
+			// if its smaller than the one in the obj or if its not in the obj and its active
+
+			// / w because the y is the actual pixel y not y in array
+			if ((c.y / w < maxYs[c.x / w] || !((c.x / w) in maxYs)) && c.isUsed) {
+				// 20 minus because its from the bottom to the top
+				maxYs[c.x / w] = rows - c.y / w;
 			}
 		}
 
@@ -211,8 +218,8 @@ class Player {
 
 		let holes = 0;
 		for (let c of grid) {
-			if (c.y < maxYs[c.x]) {
-				holes++;
+			if (c.y / w > maxYs[c.x / w]) {
+				if (c.isUsed) holes++;
 			}
 		}
 
@@ -220,12 +227,13 @@ class Player {
 	}
 
 	bumpiness(grid) {
+		if (stop) debugger;
 		let maxYs = this.getMaxYs(grid);
 
 		let bumpiness = 0;
-		for (let i = 1; i < cols.length; i++) {
-			let col = maxYs.hasOwnproperty(i) ? maxYs[i] : 0;
-			let prevcol = maxYs.hasOwnproperty(i) ? maxYs[i] : 0;
+		for (let i = 1; i < cols; i++) {
+			let col = maxYs.hasOwnProperty(i) ? maxYs[i] : 0;
+			let prevcol = maxYs.hasOwnProperty(i - 1) ? maxYs[i - 1] : 0;
 
 			bumpiness += abs(col - prevcol);
 		}

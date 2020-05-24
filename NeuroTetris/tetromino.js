@@ -10,12 +10,16 @@ function findTetrominoTypes() {
 			type = loadStrings('Tetromino/7.txt', type => {
 				prettyType(type);
 
+				let typeIndexArr = [];
+				for (let i = 0; i < types.length; i++) {
+					typeIndexArr.push(i);
+				}
 
-				for (let i = 0; i < 100; i++) {
-					type = floor(random(types.length));
-					let width = types[type][0].length;
-					let x = floor(random(cols - width));
-					randomTypeArr[i] = [width, x];
+				for (let i = 0; i < 14; i++) {
+					let shuffled = shuffle(typeIndexArr, false);
+					for (let j = 0; j < 7; j++) {
+						randomTypeArr.push([shuffled[j], 0]);
+					}
 				}
 
 				// for every player

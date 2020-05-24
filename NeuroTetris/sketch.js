@@ -1,3 +1,6 @@
+// temp
+let stop = false;
+
 // https://en.wikipedia.org/wiki/Tetris#Gameplay and 
 // https://simple.wikipedia.org/wiki/Tetris#Gameplay
 // Has explanation on what a tetromino is. I prefer the
@@ -6,7 +9,7 @@
 let w = 25; // width of each cell
 let cols, rows;
 
-let moveInterval = 4;
+let moveInterval = 512; // 4
 
 let players = [];
 let savedPlayers = [];
