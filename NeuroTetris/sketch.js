@@ -3,27 +3,23 @@
 // Has explanation on what a tetromino is. I prefer the
 // simple wikipedia explanation.
 
-let debug = true;
-
-let w; // width of each cell
+let w = 25; // width of each cell
 let cols, rows;
 
-let moveInterval;
+let moveInterval = 4;
 
 let players = [];
 let savedPlayers = [];
 let bestPlayer = null;
 
 // let TOTAL = 1000;
-let TOTAL = 50;
+let TOTAL = 1;
 
 let updateCount = 0;
 
-async function setup() {
-	w = debug ? 55 : 25;
-	moveInterval = debug ? 512 : 4;
-	TOTAL = debug ? 1 : TOTAL;
+let generating = false;
 
+async function setup() {
 	// 20 by 10
 	// 20:10
 	// 10:5
@@ -49,33 +45,32 @@ async function setup() {
 }
 
 function draw() {
-	background(0);
+	if (!(generating)) {
+		background(0);
 
-	// for every player
-	// for (let p of players) {
-	// let p = players[0];
-	let p = bestPlayer;
+		// for every player
+		// for (let p of players) {
+		// let p = players[0];
+		let p = bestPlayer;
 
-	if (bestPlayer.isDead) {
-		p = players[0];
+		if (bestPlayer.isDead) {
+			p = players[0];
+		}
+
+		for (let c of p.grid) {
+			c.show();
+		}
+
+		fill(255, 0, 255);
+		textAlign(CENTER, CENTER);
+		textSize(32);
+		text(p.points, width / 2, height / 4);
+		// }
 	}
-
-	for (let c of p.grid) {
-		c.show();
-	}
-
-	fill(255, 0, 255);
-	textAlign(CENTER, CENTER);
-	textSize(32);
-	text(p.points, width / 2, height / 4);
-	// }
-
 }
 
-function update(updateLogic) {
-	if (updateLogic) {
-		updateCount++;
-	}
+function update() {
+	updateCount++;
 
 	// for every player
 	// for (let p of players) {
@@ -92,28 +87,23 @@ function update(updateLogic) {
 			}
 		}
 
-		if (!debug) {
-			if (updateLogic == "don't update the logic please") {
-				p.active_tetromino.updateCells(false, true);
-			} else {
-				p.active_tetromino.updateCells(true, true);
-				if (p.isDead) {
-					p.delete(i);
-				}
-
-				p.think();
-
-				if (updateCount % 100 == 0) {
-					p.points++;
-				}
-
-				if (players.length === 0) {
-					nextGeneration();
-				}
-
-				p.checkAllRowsCleared();
-			}
+		p.active_tetromino.updateCells(true, true);
+		if (p.isDead) {
+			p.delete(i);
 		}
+
+		p.think();
+
+		if (updateCount % 100 == 0) {
+			p.points++;
+		}
+
+		if (players.length === 0) {
+			generating = true;
+			nextGeneration();
+		}
+
+		p.checkAllRowsCleared();
 	});
 }
 
@@ -125,7 +115,9 @@ function prettyType(type) {
 }
 
 async function mySetInterval() {
-	update("update the logic pretty please");
+	if (!(generating)) {
+		update();
+	}
 	await sleep(moveInterval);
 	mySetInterval(); // yay recusion :)
 }

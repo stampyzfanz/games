@@ -1,15 +1,3 @@
-function mutate(x) {
-	if (random(1) < 0.05) {
-		let offset = randomGaussian() * 0.2;
-		let newx = x + offset;
-		// console.log('mutate')
-		return newx;
-	} else {
-		return x;
-	}
-}
-
-
 class Player {
 	constructor(genes) {
 		this.grid = [];
@@ -28,7 +16,7 @@ class Player {
 		}
 
 		if (genes) {
-			this.genes = genes.mutate(mutate);
+			this.genes = genes;
 		} else {
 			// TODO: STARTING GENES
 			this.genes = [random(-1, 1), random(-1, 1), random(-1, 1), random(-1, 1)];
@@ -89,46 +77,98 @@ class Player {
 	}
 
 	think() {
-		// go thru every combination of orientation and position of tetrominoes
-		let clone = deepclone(this);
+		// if it doesn't know where it desires to go, decide where it desires to go
+		// before I added === undefined if desired x = 0 it would recompute this every tick
+		if (this.active_tetromino.desiredx === undefined) {
+			// go thru every combination of orientation and position of tetrominoes
+			let clone = deepclone(this);
 
-		let bestScore = -Infinity;
-		let bestPosition = null;
+			let bestScore = -Infinity;
+			let bestPosition = null;
 
-		this.active_tetromino.x = 0;
-		// every combination of thing thingy
-		for (let i = 0; i < 4; i++) {
-			let x = 0;
-			// try to put it in every position from left to right
-			while (clone.active_tetromino.canMove(x, 0)) {
-				// go down to the bottommost place it can
-				clone.active_tetromino.rotate(i);
-				clone.active_tetromino.move(x, 0);
-				while (clone.active_tetromino.canMove(0, -1)) {
-					clone.active_tetromino.move(0, -1);
+			this.active_tetromino.x = 0;
+			// every combination of thing thingy
+			for (let i = 0; i < 4; i++) {
+				let x = 0;
+				// try to put it in every position from left to right
+				while (clone.active_tetromino.canMove(x, 0)) {
+					// go down to the bottommost place it can
+					clone.active_tetromino.rotate(i);
+					clone.active_tetromino.move(x, 0);
+					while (clone.active_tetromino.canMove(0, 1)) {
+						clone.active_tetromino.move(0, 1);
+					}
+
+					// its at the bottom now look at its score
+					let score = this.genes[0] * clone.aggregateLines(clone.grid) +
+						this.genes[1] * clone.completedLines(clone.grid) +
+						this.genes[2] * clone.holes(clone.grid) +
+						this.genes[3] * clone.bumpiness(clone.grid);
+
+					if (score > bestScore) {
+						bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y, i];
+						bestScore = score;
+					}
+
+					// in clone lib
+					clone = deepclone(this);
+					x++;
 				}
-
-				// its at the bottom now look at its score
-				// debugger;
-				let score = this.genes[0] * clone.aggregateLines(clone.grid) +
-					this.genes[1] * clone.completedLines(clone.grid) +
-					this.genes[2] * clone.holes(clone.grid) +
-					this.genes[3] * clone.bumpiness(clone.grid);
-
-				if (score > bestScore) {
-					bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y];
-					bestScore = score;
-				}
-
-				// in clone lib
-				clone = deepclone(this);
-				x++;
 			}
+
+			if (bestPosition == null) {
+				let isChecking = false;
+				if (isChecking) {
+					this.think();
+				}
+				this.isDead = true;
+				console.log('dead');
+				// gameover
+				return;
+			}
+
+			this.active_tetromino.desiredx = bestPosition[0];
+			this.active_tetromino.desiredy = bestPosition[1];
+			this.active_tetromino.desiredRotation = bestPosition[2];
 		}
 
-		let x = bestPosition[0];
-		let y = bestPosition[1];
-		this.active_tetromino.move(x, y);
+		this.moveActive();
+	}
+
+	moveActive() {
+		// look at whether to go left or right
+		let xoff = this.active_tetromino.desiredx - this.active_tetromino.x;
+		this.active_tetromino.move(constrain(xoff, -1, 1), 0);
+
+		/*
+		My explanation I posted to my non coder friend after I made it:
+		But to a machine 360 degrees isnt the same as 0 degrees, 360 degrees is the opposite side
+		How would you go about finding whether to go clockwise or counterclockwise?
+		Solution: current - desired
+		If thats < 180 then go that far and you will reach desired
+		If its > 180 degrees then add 360 degrees to the smallest one
+		Then subtract again
+		And turn that far
+		And will you reach desired with smallest turn
+		*/
+
+		// look at whether to turn clockwise or counterclockwise
+		let current = this.active_tetromino.rotation;
+		let desired = this.active_tetromino.desiredRotation;
+		if (current - desired > 2) {
+			// add 4 to smallest one
+			if (current > desired) {
+				desired += 4;
+			} else {
+				current += 4;
+			}
+		}
+		let rotation_vel = current - desired;
+		let constrained = constrain(rotation_vel, -1, 1);
+		// it cant do -1 (-90 degrees) due to naive rotation algorithm, 
+		// just do it 3 (270 degrees)
+		this.active_tetromino.desiredRotation += constrained;
+		this.active_tetromino.rotate(constrained == 1 ? 1 : 3);
 	}
 
 	getMaxYs(grid) {
@@ -190,30 +230,5 @@ class Player {
 
 	delete(i) {
 		savedPlayers.push(players.splice(i, 1)[0]);
-	}
-
-	moveActiveTetromino(type) {
-		switch (type) {
-			case 0:
-				this.active_tetromino.move(-1, 0);
-				break;
-			case 1:
-				this.active_tetromino.move(1, 0);
-				break;
-			case 2:
-				this.active_tetromino.move(0, 1);
-				break;
-			case 3:
-				this.active_tetromino.rotate(3);
-				break;
-			case 4:
-				this.active_tetromino.rotate(1);
-				break;
-			case 5:
-				// do nothing
-				break;
-		}
-		// refrain from updating the logic
-		update("don't update the logic please");
 	}
 }

@@ -62,6 +62,8 @@ class Tetromino {
 		this.y = 0;
 		this.i = i;
 
+		this.rotation = 0;
+
 		this.col = getRandomColour();
 
 		this.player = player;
@@ -183,6 +185,8 @@ class Tetromino {
 		let type = rotateMatrix(this.type, times);
 		if (this.canMove(0, 0, type)) {
 			this.type = type;
+			// make it so it rotates the cells of the board not just the shape itself
+			this.updateCells(false, true);
 		}
 	}
 

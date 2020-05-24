@@ -2,10 +2,11 @@ function nextGeneration() {
 	calcFitness();
 
 	for (let i = 0; i < TOTAL; i++) {
-		// let parentA = pickOne(savedPlayers);
-		// let parentB = pickOne(savedPlayers);
-		// players[i] = crossover(parentA, parentB);
-		players[i] = pickOne(savedPlayers);
+		let parentA = pickOne(savedPlayers);
+		let parentB = pickOne(savedPlayers);
+		let genes = crossover(parentA, parentB);
+		// players[i] = pickOne(savedPlayers);
+		players[i] = new Player(genes);
 	}
 
 	for (let p of players) {
@@ -13,6 +14,7 @@ function nextGeneration() {
 	}
 
 	savedPlayers = [];
+	generating = false;
 }
 
 function calcFitness() {
@@ -87,5 +89,27 @@ function pickOne(players) {
 	// (this includes mutation)
 	// console.log(birds);
 	// console.log(birds[index]);
-	return players[index].genes;
+
+	// maybe I should've used the mutation function I copy pasted but kept in the player.js file
+
+	let clone = deepclone(players[index]);
+	// 5% chance of random component mutating
+	if (random() < 0.05) {
+		// mutate random gene by small change to it
+		let index = floor(random(4));
+		// random number between 0.2 and -0.2
+		clone.genes[index] += map(random(), 0, 1, 0.2, -0.2);
+	}
+	return clone;
+}
+
+function crossover(parentA, parentB) {
+	// I wish it was vectors now that I think about it
+	// return parentA.genes * parentA.fitness + parentB.genes * parentB.fitness;
+	let genes = [];
+	for (let i = 0; i < parentA.genes.length; i++) {
+		genes[i] = parentA.genes[i] * parentA.fitness + parentB.genes[i] * parentB.fitness;
+		genes[i] /= parentA.fitness + parentB.fitness;
+	}
+	return genes;
 }

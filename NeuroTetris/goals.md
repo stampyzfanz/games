@@ -16,6 +16,10 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [x] Remove NN code
 - [x] Do algorithms for the measurements
 - [x] Make GA
+- [] Does it clear 10 lines?
+- [] Does it beat me and clear 1000 lines?
+- [] Does it beat human champion?
+- [] Include next tetromino to factor into decision.
 
 ## Bugs
 - [] Does it work?
