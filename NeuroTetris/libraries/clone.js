@@ -1,3 +1,83 @@
+// extends 'from' object with members from 'to'. If 'to' is null, a deep clone of 'from' is returned
+// function deepclone(from, to) {
+// 	if (from == null || typeof from != "object") return from;
+// 	if (from.constructor != Object && from.constructor != Array) return from;
+// 	if (from.constructor == Date || from.constructor == RegExp || from.constructor == Function ||
+// 		from.constructor == String || from.constructor == Number || from.constructor == Boolean)
+// 		return new from.constructor(from);
+
+// 	to = to || new from.constructor();
+
+// 	for (var name in from) {
+// 		to[name] = typeof to[name] == "undefined" ? extend(from[name], null) : to[name];
+// 	}
+
+// 	return to;
+// }
+
+// class StructuredCloner {
+// 	constructor() {
+// 		this.pendingClones_ = new Map();
+// 		this.nextKey_ = 0;
+
+// 		const channel = new MessageChannel();
+// 		this.inPort_ = channel.port1;
+// 		this.outPort_ = channel.port2;
+
+// 		this.outPort_.onmessage = ({
+// 			data: {
+// 				key,
+// 				value
+// 			}
+// 		}) => {
+// 			const resolve = this.pendingClones_.get(key);
+// 			resolve(value);
+// 			this.pendingClones_.delete(key);
+// 		};
+// 		this.outPort_.start();
+// 	}
+
+// 	cloneAsync(value) {
+// 		return new Promise(resolve => {
+// 			const key = this.nextKey_++;
+// 			this.pendingClones_.set(key, resolve);
+// 			this.inPort_.postMessage({
+// 				key,
+// 				value
+// 			});
+// 		});
+// 	}
+// }
+
+// const structuredCloneAsync = window.structuredCloneAsync =
+// 	StructuredCloner.prototype.cloneAsync.bind(new StructuredCloner);
+
+// const main = async() => {
+// 	const original = {
+// 		date: new Date(),
+// 		number: Math.random()
+// 	};
+// 	original.self = original;
+
+// 	const clone = await structuredCloneAsync(original);
+
+// 	// They're different objects:
+// 	console.assert(original !== clone);
+// 	console.assert(original.date !== clone.date);
+
+// 	// They're cyclical:
+// 	console.assert(original.self === original);
+// 	console.assert(clone.self === clone);
+
+// 	// They contain equivalent values:
+// 	console.assert(original.number === clone.number);
+// 	console.assert(Number(original.date) === Number(clone.date));
+
+// 	console.log("Assertions complete for deep cloner.");
+// };
+
+// main();
+
 // function deepclone(inObject) {
 //  let outObject, value, key
 

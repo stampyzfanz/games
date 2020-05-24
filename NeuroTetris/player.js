@@ -81,7 +81,11 @@ class Player {
 		// before I added === undefined if desired x = 0 it would recompute this every tick
 		if (this.active_tetromino.desiredx === undefined) {
 			// go thru every combination of orientation and position of tetrominoes
-			let clone = deepclone(this);
+			// let clone = deepclone(this);
+			// let clone = t structuredCloneAsync(this);
+			// let clone = deepclone(this);
+			let clone = _.cloneDeep(this);
+			// debugger;
 
 			let bestScore = -Infinity;
 			let bestPosition = null;
@@ -91,12 +95,12 @@ class Player {
 			for (let i = 0; i < 4; i++) {
 				let x = 0;
 				// try to put it in every position from left to right
-				while (clone.active_tetromino.canMove(x, 0)) {
+				while (clone.active_tetromino.canMove(x, 0, undefined, this)) {
 					// go down to the bottommost place it can
-					clone.active_tetromino.rotate(i);
-					clone.active_tetromino.move(x, 0);
-					while (clone.active_tetromino.canMove(0, 1)) {
-						clone.active_tetromino.move(0, 1);
+					clone.active_tetromino.rotate(i, this);
+					clone.active_tetromino.move(x, 0, this);
+					while (clone.active_tetromino.canMove(0, 1, undefined, this)) {
+						clone.active_tetromino.move(0, 1, this);
 					}
 
 					// its at the bottom now look at its score
@@ -111,16 +115,15 @@ class Player {
 					}
 
 					// in clone lib
-					clone = deepclone(this);
+					// clone = deepclone(this);
+					clone = _.cloneDeep(this);
+					// clone = await structuredCloneAsync(this);
+					// clone = ceep
 					x++;
 				}
 			}
 
 			if (bestPosition == null) {
-				let isChecking = false;
-				if (isChecking) {
-					this.think();
-				}
 				this.isDead = true;
 				console.log('dead');
 				// gameover
@@ -138,7 +141,7 @@ class Player {
 	moveActive() {
 		// look at whether to go left or right
 		let xoff = this.active_tetromino.desiredx - this.active_tetromino.x;
-		this.active_tetromino.move(constrain(xoff, -1, 1), 0);
+		this.active_tetromino.move(constrain(xoff, -1, 1), 0, this);
 
 		/*
 		My explanation I posted to my non coder friend after I made it:
@@ -168,7 +171,7 @@ class Player {
 		// it cant do -1 (-90 degrees) due to naive rotation algorithm, 
 		// just do it 3 (270 degrees)
 		this.active_tetromino.desiredRotation += constrained;
-		this.active_tetromino.rotate(constrained == 1 ? 1 : 3);
+		this.active_tetromino.rotate(constrained == 1 ? 1 : 3, this);
 
 		update(false);
 	}

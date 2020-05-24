@@ -44,8 +44,8 @@ function pickTetromino(player) {
 	player.active_tetromino = new Tetromino(x, type,
 		player.tetrominoes.length + 1, player);
 	player.tetrominoes.push(player.active_tetromino);
-	player.active_tetromino.isGameOver1();
-	player.active_tetromino.updateCells(false, true);
+	player.active_tetromino.isGameOver1(player);
+	player.active_tetromino.updateCells(false, true, player);
 }
 
 function kill(i, player) {
@@ -66,11 +66,10 @@ class Tetromino {
 
 		this.col = getRandomColour();
 
-		this.player = player;
-		this.player.tetrominoNum++;
+		player.tetrominoNum++;
 	}
 
-	isGameOver1() {
+	isGameOver1(player) {
 		let anyBlank = true;
 		for (let j = 0; j < this.type.length; j++) {
 			for (let i = 0; i < this.type[j].length; i++) {
@@ -80,32 +79,32 @@ class Tetromino {
 					let x = i + this.x;
 					let y = j + this.y;
 
-					if (this.player.grid[index(x, y)].isUsed) {
+					if (player.grid[index(x, y)].isUsed) {
 						// Game over
 
-						this.player.isDead = true;
+						player.isDead = true;
 					}
 				}
 			}
 		}
 	}
 
-	isGameOver2() {
+	isGameOver2(player) {
 		if (this.y > rows + 1) {
-			this.player.isDead = true;
+			player.isDead = true;
 		}
 	}
 
-	updateCells(ifUpdateY, isActive) {
+	updateCells(ifUpdateY, isActive, player) {
 		if (ifUpdateY) {
 			// check that there isn't another tetromino or the bottom 
 			// of the screen that it would fall through
 
-			if (this.canMove(0, 1)) {
+			if (this.canMove(0, 1, undefined, player)) {
 				this.y++;
 			} else {
 				// Pick another
-				pickTetromino(this.player);
+				pickTetromino(player);
 			}
 		}
 
@@ -125,18 +124,18 @@ class Tetromino {
 					let y = j + this.y;
 
 					// console.log(x, y)
-					this.player.grid[index(x, y)].col = this.col;
-					this.player.grid[index(x, y)].isUsed = true;
+					player.grid[index(x, y)].col = this.col;
+					player.grid[index(x, y)].isUsed = true;
 					if (isActive) {
-						this.player.grid[index(x, y)].isActive = true;
+						player.grid[index(x, y)].isActive = true;
 					}
-					this.player.grid[index(x, y)].whoUsed = this.i;
+					player.grid[index(x, y)].whoUsed = this.i;
 				}
 			}
 		}
 	}
 
-	canMove(xoff, yoff, type) {
+	canMove(xoff, yoff, type, player) {
 		if (type == undefined) {
 			type = this.type;
 		}
@@ -154,9 +153,9 @@ class Tetromino {
 					}
 
 					try {
-						if (this.player.grid[index(x, y)].isUsed) {
+						if (player.grid[index(x, y)].isUsed) {
 							// if its me that I will touch if I move
-							if (this.player.grid[index(x, y)].whoUsed ==
+							if (player.grid[index(x, y)].whoUsed ==
 								this.i) {
 								// its okay, keep going
 							} else {
@@ -173,20 +172,20 @@ class Tetromino {
 		return true;
 	}
 
-	move(x, y) {
-		if (this.canMove(x, y)) {
+	move(x, y, player) {
+		if (this.canMove(x, y, undefined, player)) {
 			// move(x, y); // lol recurisiveness
 			this.x += x
 			this.y += y;
 		}
 	}
 
-	rotate(times) {
+	rotate(times, player) {
 		let type = rotateMatrix(this.type, times);
-		if (this.canMove(0, 0, type)) {
+		if (this.canMove(0, 0, type, player)) {
 			this.type = type;
 			// make it so it rotates the cells of the board not just the shape itself
-			this.updateCells(false, true);
+			this.updateCells(false, true, player);
 		}
 	}
 

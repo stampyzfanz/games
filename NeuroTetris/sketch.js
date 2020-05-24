@@ -81,23 +81,23 @@ function update(updateLogic) {
 
 		for (let t of p.tetrominoes) {
 			if (t !== p.active_tetromino) {
-				t.updateCells(false, false);
+				t.updateCells(false, false, p);
 			} else {
-				t.isGameOver2();
+				t.isGameOver2(p);
 			}
 		}
 
 		if (updateLogic) {
-			p.active_tetromino.updateCells(true, true);
+			p.active_tetromino.updateCells(true, true, p);
 		} else {
-			p.active_tetromino.updateCells(false, true);
+			p.active_tetromino.updateCells(false, true, p);
 		}
 
 		if (p.isDead) p.delete(i);
 
 		if (updateLogic) p.think();
 
-		if (updateCount % 10 == 0) p.points++;
+		if (updateCount % 10 == 0 && updateLogic) p.points++;
 
 		if (players.length === 0) {
 			generating = true;

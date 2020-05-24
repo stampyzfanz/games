@@ -5,7 +5,7 @@ function nextGeneration() {
 		let parentA = pickOne(savedPlayers);
 		let parentB = pickOne(savedPlayers);
 		let genes = crossover(parentA, parentB);
-		// players[i] = pickOne(savedPlayers);
+		// players[i] = await pickOne(savedPlayers);
 		players[i] = new Player(genes);
 	}
 
@@ -92,7 +92,8 @@ function pickOne(players) {
 
 	// maybe I should've used the mutation function I copy pasted but kept in the player.js file
 
-	let clone = deepclone(players[index]);
+	// let clone = deepclone(players[index]);
+	let clone = _.cloneDeep(players[index]);
 	// 5% chance of random component mutating
 	if (random() < 0.05) {
 		// mutate random gene by small change to it
