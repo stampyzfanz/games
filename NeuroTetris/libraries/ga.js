@@ -36,7 +36,7 @@ function calcFitness() {
 	// console.log(Math.log(sum / savedPlayers.length) / Math.log(1.1));
 	// createP(Math.log(sum / savedPlayers.length) / Math.log(1.1));
 	console.log('avg: ' + (sum ** (1 / 50)) / savedPlayers.length);
-	createP('avg: ' + (sum ** (1 / 50)) / savedPlayers.length);
+	createP('best: ' + (best ** (1 / 50)) / savedPlayers.length);
 	// createP((sum / savedPlayers.length) ** (1 / 50));
 	// createP(Math.log(best) / Math.log(1.1));
 	console.log('best: ' + best ** (1 / 50));

@@ -169,6 +169,8 @@ class Player {
 		// just do it 3 (270 degrees)
 		this.active_tetromino.desiredRotation += constrained;
 		this.active_tetromino.rotate(constrained == 1 ? 1 : 3);
+
+		update(false);
 	}
 
 	getMaxYs(grid) {

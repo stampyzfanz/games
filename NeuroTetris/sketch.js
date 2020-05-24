@@ -69,11 +69,11 @@ function draw() {
 	}
 }
 
-function update() {
-	updateCount++;
+function update(updateLogic) {
+	if (updateLogic) {
+		updateCount++;
+	}
 
-	// for every player
-	// for (let p of players) {
 	players.forEach((p, i) => {
 		for (let c of p.grid) {
 			c.reset();
@@ -87,16 +87,17 @@ function update() {
 			}
 		}
 
-		p.active_tetromino.updateCells(true, true);
-		if (p.isDead) {
-			p.delete(i);
+		if (updateLogic) {
+			p.active_tetromino.updateCells(true, true);
+		} else {
+			p.active_tetromino.updateCells(false, true);
 		}
 
-		p.think();
+		if (p.isDead) p.delete(i);
 
-		if (updateCount % 100 == 0) {
-			p.points++;
-		}
+		if (updateLogic) p.think();
+
+		if (updateCount % 10 == 0) p.points++;
 
 		if (players.length === 0) {
 			generating = true;
@@ -116,7 +117,7 @@ function prettyType(type) {
 
 async function mySetInterval() {
 	if (!(generating)) {
-		update();
+		update(true);
 	}
 	await sleep(moveInterval);
 	mySetInterval(); // yay recusion :)
