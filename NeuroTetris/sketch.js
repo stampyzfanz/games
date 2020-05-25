@@ -84,16 +84,16 @@ function update(updateLogic) {
 
 		for (let t of p.tetrominoes) {
 			if (t !== p.active_tetromino) {
-				t.updateCells(false, false, p);
+				t.updateCells(false, p);
 			} else {
 				t.isGameOver2(p);
 			}
 		}
 
 		if (updateLogic) {
-			p.active_tetromino.updateCells(true, true, p);
+			p.active_tetromino.updateCells(true, p);
 		} else {
-			p.active_tetromino.updateCells(false, true, p);
+			p.active_tetromino.updateCells(false, p);
 		}
 
 		if (p.isDead) p.delete(i);

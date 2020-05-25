@@ -78,6 +78,7 @@ class Player {
 	}
 
 	think() {
+		let tempclones = [];
 		// if it doesn't know where it desires to go, decide where it desires to go
 		// before I added === undefined if desired x = 0 it would recompute this every tick
 		if (this.active_tetromino.desiredx === undefined) {
@@ -86,31 +87,43 @@ class Player {
 			// let clone = t structuredCloneAsync(this);
 			// let clone = deepclone(this);
 			let clone = _.cloneDeep(this);
-			// debugger;
+			tempclones.push(clone);
+
 
 			let bestScore = -Infinity;
 			let bestPosition = null;
 
-			this.active_tetromino.x = 0;
+			clone.active_tetromino.x = 0;
 			// every combination of thing thingy
 			for (let i = 0; i < 4; i++) {
 				let x = 0;
 				// try to put it in every position from left to right
-				while (clone.active_tetromino.canMove(x, 0, undefined, this)) {
+				while (clone.active_tetromino.canMove(x, 0, undefined, clone)) {
 					// go down to the bottommost place it can
-					clone.active_tetromino.rotate(i, this);
-					clone.active_tetromino.move(x, 0, this);
-					while (clone.active_tetromino.canMove(0, 1, undefined, this)) {
-						clone.active_tetromino.move(0, 1, this);
+					clone.active_tetromino.rotate(i, clone);
+					clone.active_tetromino.move(x, 0, clone);
+					while (clone.active_tetromino.canMove(0, 1, undefined, clone)) {
+						clone.active_tetromino.move(0, 1, clone);
 					}
 
-					if (stop) debugger;
+					// while the tetromino is lower, it hasn't updated its cells yet
+					// so update so it updates grid or else the score will be the same for everything
+					clone.active_tetromino.updateCells(false, clone)
+
+
 					// its at the bottom now look at its score
 					let score = this.genes[0] * clone.aggregateLines(clone.grid) +
 						this.genes[1] * clone.completedLines(clone.grid) +
 						this.genes[2] * clone.holes(clone.grid) +
 						this.genes[3] * clone.bumpiness(clone.grid);
-					if (stop) debugger;
+
+					console.log(this.genes[0] * clone.aggregateLines(clone.grid),
+							this.genes[1] * clone.completedLines(clone.grid),
+							this.genes[2] * clone.holes(clone.grid),
+							this.genes[3] * clone.bumpiness(clone.grid)
+						)
+						// console.log()
+						// console.log(clone.bumpiness(clone.grid));
 
 					if (score > bestScore) {
 						bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y, i];
@@ -120,6 +133,8 @@ class Player {
 					// in clone lib
 					// clone = deepclone(this);
 					clone = _.cloneDeep(this);
+					tempclones.push(clone);
+
 					// clone = await structuredCloneAsync(this);
 					// clone = ceep
 					x++;
@@ -139,6 +154,7 @@ class Player {
 		}
 
 		this.moveActive();
+		// debugger;
 	}
 
 	moveActive() {
@@ -227,7 +243,7 @@ class Player {
 	}
 
 	bumpiness(grid) {
-		if (stop) debugger;
+		// if (stop) debugger;
 		let maxYs = this.getMaxYs(grid);
 
 		let bumpiness = 0;

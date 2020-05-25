@@ -49,7 +49,7 @@ function pickTetromino(player) {
 		player.tetrominoes.length + 1, player);
 	player.tetrominoes.push(player.active_tetromino);
 	player.active_tetromino.isGameOver1(player);
-	player.active_tetromino.updateCells(false, true, player);
+	player.active_tetromino.updateCells(false, player);
 }
 
 function kill(i, player) {
@@ -99,7 +99,7 @@ class Tetromino {
 		}
 	}
 
-	updateCells(ifUpdateY, isActive, player) {
+	updateCells(ifUpdateY, player) {
 		if (ifUpdateY) {
 			// check that there isn't another tetromino or the bottom 
 			// of the screen that it would fall through
@@ -130,9 +130,6 @@ class Tetromino {
 					// console.log(x, y)
 					player.grid[index(x, y)].col = this.col;
 					player.grid[index(x, y)].isUsed = true;
-					if (isActive) {
-						player.grid[index(x, y)].isActive = true;
-					}
 					player.grid[index(x, y)].whoUsed = this.i;
 				}
 			}
@@ -189,7 +186,7 @@ class Tetromino {
 		if (this.canMove(0, 0, type, player)) {
 			this.type = type;
 			// make it so it rotates the cells of the board not just the shape itself
-			this.updateCells(false, true, player);
+			this.updateCells(false, player);
 		}
 	}
 

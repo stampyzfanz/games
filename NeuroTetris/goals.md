@@ -24,4 +24,11 @@ To put into writing what I want to do with this game so that I don't overenginee
 ## Bugs
 - [] Does it work?
 
-
+## Steps
+- [] run piece picking algorithm every generation
+- [] fix when it randomly restarts
+- [] check bumpiness and debug maybe
+- [] do GA
+- [] make it faster
+- [] visualise it picking
+- [] remove unnessessary code (eg debug var, console logs, all the extra code for clone.js)
