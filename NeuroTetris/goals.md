@@ -25,10 +25,11 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [] Does it work?
 
 ## Steps
-- [] run piece picking algorithm every generation
-- [] fix when it randomly restarts
-- [] check bumpiness and debug maybe
+- [x] run piece picking algorithm every generation
+- [x] fix when it randomly restarts
+- [x] check bumpiness and debug maybe
 - [] do GA
 - [] make it faster
 - [] visualise it picking
 - [] remove unnessessary code (eg debug var, console logs, all the extra code for clone.js)
+- [] rename repo to reflect the mode of ML used (ie GA Tetris rather than Neuro or NEAR Tetris)

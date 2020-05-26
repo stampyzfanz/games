@@ -108,7 +108,11 @@ class Player {
 
 					// while the tetromino is lower, it hasn't updated its cells yet
 					// so update so it updates grid or else the score will be the same for everything
-					clone.active_tetromino.updateCells(false, clone)
+
+					// but even if we update the current one, itll leave the traces of the previous 
+					// cells behind
+					for (let c of clone.grid) c.reset();
+					for (let t of clone.tetrominoes) t.updateCells(false, clone)
 
 
 					// its at the bottom now look at its score
@@ -117,13 +121,20 @@ class Player {
 						this.genes[2] * clone.holes(clone.grid) +
 						this.genes[3] * clone.bumpiness(clone.grid);
 
-					console.log(this.genes[0] * clone.aggregateLines(clone.grid),
-							this.genes[1] * clone.completedLines(clone.grid),
-							this.genes[2] * clone.holes(clone.grid),
-							this.genes[3] * clone.bumpiness(clone.grid)
-						)
-						// console.log()
-						// console.log(clone.bumpiness(clone.grid));
+					// console.log(clone.aggregateLines(clone.grid),
+					// 		clone.completedLines(clone.grid),
+					// 		clone.holes(clone.grid),
+					// 		clone.bumpiness(clone.grid)
+					// 	)
+					// console.log()
+					// console.log(clone.bumpiness(clone.grid));
+
+					// if (stop) debugger;
+
+					// if (clone.bumpiness(clone.grid) > 15) {
+					// 	stop = true
+					// 	clone.bumpiness(clone.grid)
+					// }
 
 					if (score > bestScore) {
 						bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y, i];
@@ -143,7 +154,7 @@ class Player {
 
 			if (bestPosition == null) {
 				this.isDead = true;
-				console.log('dead');
+				// console.log('best position == null');
 				// gameover
 				return;
 			}
@@ -243,7 +254,7 @@ class Player {
 	}
 
 	bumpiness(grid) {
-		// if (stop) debugger;
+		if (stop) debugger;
 		let maxYs = this.getMaxYs(grid);
 
 		let bumpiness = 0;

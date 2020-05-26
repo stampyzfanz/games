@@ -9,14 +9,14 @@ let stop = false;
 let w = 25; // width of each cell
 let cols, rows;
 
-let moveInterval = 512; // 4
+let moveInterval = 32; // 4
 
 let players = [];
 let savedPlayers = [];
 let bestPlayer = null;
 
 // let TOTAL = 1000;
-let TOTAL = 1;
+let TOTAL = 50;
 
 let updateCount = 0;
 
@@ -104,10 +104,11 @@ function update(updateLogic) {
 
 		if (players.length === 0) {
 			generating = true;
+			shuffleTypes();
 			nextGeneration();
 		}
 
-		p.checkAllRowsCleared();
+		if (updateLogic) p.checkAllRowsCleared();
 	});
 }
 

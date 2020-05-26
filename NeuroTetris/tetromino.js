@@ -10,17 +10,7 @@ function findTetrominoTypes() {
 			type = loadStrings('Tetromino/7.txt', type => {
 				prettyType(type);
 
-				let typeIndexArr = [];
-				for (let i = 0; i < types.length; i++) {
-					typeIndexArr.push(i);
-				}
-
-				for (let i = 0; i < 14; i++) {
-					let shuffled = shuffle(typeIndexArr, false);
-					for (let j = 0; j < 7; j++) {
-						randomTypeArr.push([shuffled[j], 0]);
-					}
-				}
+				shuffleTypes();
 
 				// for every player
 				for (let p of players) {
@@ -30,6 +20,22 @@ function findTetrominoTypes() {
 				mySetInterval();
 
 			});
+		}
+	}
+}
+
+function shuffleTypes() {
+	let typeIndexArr = [];
+	for (let i = 0; i < types.length; i++) {
+		typeIndexArr.push(i);
+	}
+
+	randomTypeArr = [];
+
+	for (let i = 0; i < 14; i++) {
+		let shuffled = shuffle(typeIndexArr, false);
+		for (let j = 0; j < 7; j++) {
+			randomTypeArr.push([shuffled[j], 0]);
 		}
 	}
 }
@@ -85,7 +91,7 @@ class Tetromino {
 
 					if (player.grid[index(x, y)].isUsed) {
 						// Game over
-
+						console.log('isGameOver1')
 						player.isDead = true;
 					}
 				}
@@ -95,8 +101,22 @@ class Tetromino {
 
 	isGameOver2(player) {
 		if (this.y > rows + 1) {
+			console.log('isGameOver2');
+			debugger;
 			player.isDead = true;
 		}
+	}
+
+	isRemoved() {
+		for (let j = 0; j < this.type.length; j++) {
+			for (let i = 0; i < this.type[j].length; i++) {
+				if (this.type[j][i] == '█') {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	updateCells(ifUpdateY, player) {
@@ -104,7 +124,7 @@ class Tetromino {
 			// check that there isn't another tetromino or the bottom 
 			// of the screen that it would fall through
 
-			if (this.canMove(0, 1, undefined, player)) {
+			if (this.canMove(0, 1, undefined, player) && !(this.isRemoved())) {
 				this.y++;
 			} else {
 				// Pick another
