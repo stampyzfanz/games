@@ -15,4 +15,13 @@ function setupDom() {
 	let explanation = createP('Speed of the tetrominoes falling')
 		.style('display', 'inline-block')
 		.parent('#canvas');
+
+
+	createElement('br')
+		.parent('#canvas');
+
+	isVisualising = createCheckbox('Visualise score algorithm for picking pieces', true)
+		.parent('#canvas')
+		.style('display', 'inline-block')
+		.style('width', '100%')
 }

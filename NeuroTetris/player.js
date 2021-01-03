@@ -8,15 +8,21 @@ class Player {
 		this.tetrominoNum = 0;
 
 
-		for (let y = 0; y < height; y += w) {
-			for (let x = 0; x < width; x += w) {
-				let cell = new Cell(x, y, w);
+		for (let y = 0; y < rows; y++) {
+			for (let x = 0; x < cols; x++) {
+				let cell = new Cell(x * w, y * w, w);
 				this.grid.push(cell);
 			}
 		}
 
 		if (genes) {
 			this.genes = genes;
+
+			let d = (this.genes[0] ** 2 + this.genes[1] ** 2 +
+				this.genes[2] ** 2 + this.genes[3] ** 2) ** 0.5;
+			for (let i = 0; i < genes.length; i++) {
+				genes[i] /= d;
+			}
 		} else {
 			// TODO: STARTING GENES
 			// this.genes = [random(-1, 1), random(-1, 1), random(-1, 1), random(-1, 1)]; 
@@ -77,8 +83,7 @@ class Player {
 		}
 	}
 
-	think() {
-		let tempclones = [];
+	think(isDrawn) {
 		// if it doesn't know where it desires to go, decide where it desires to go
 		// before I added === undefined if desired x = 0 it would recompute this every tick
 		if (this.active_tetromino.desiredx === undefined) {
@@ -87,20 +92,20 @@ class Player {
 			// let clone = t structuredCloneAsync(this);
 			// let clone = deepclone(this);
 			let clone = _.cloneDeep(this);
-			tempclones.push(clone);
-
 
 			let bestScore = -Infinity;
 			let bestPosition = null;
 
 			clone.active_tetromino.x = 0;
+
 			// every combination of thing thingy
 			for (let i = 0; i < 4; i++) {
 				let x = 0;
+
 				// try to put it in every position from left to right
 				while (clone.active_tetromino.canMove(x, 0, undefined, clone)) {
+
 					// go down to the bottommost place it can
-					clone.active_tetromino.rotate(i, clone);
 					clone.active_tetromino.move(x, 0, clone);
 					while (clone.active_tetromino.canMove(0, 1, undefined, clone)) {
 						clone.active_tetromino.move(0, 1, clone);
@@ -121,20 +126,26 @@ class Player {
 						this.genes[2] * clone.holes(clone.grid) +
 						this.genes[3] * clone.bumpiness(clone.grid);
 
-					// console.log(clone.aggregateLines(clone.grid),
-					// 		clone.completedLines(clone.grid),
-					// 		clone.holes(clone.grid),
-					// 		clone.bumpiness(clone.grid)
-					// 	)
-					// console.log()
-					// console.log(clone.bumpiness(clone.grid));
+					if (isDrawn && isVisualising.checked()) {
+						updateStack.push([
+							[
+								clone.aggregateLines(clone.grid),
+								clone.completedLines(clone.grid),
+								clone.holes(clone.grid),
+								clone.bumpiness(clone.grid)
+							],
+							this.genes,
+							score,
+							_.cloneDeep(clone),
+							// below here is for debugging score algorithm
+							// x,
+							// clone.active_tetromino.x,
+							// clone.active_tetromino.y,
+							// clone.active_tetromino.rotation
+						]);
+					}
 
 					// if (stop) debugger;
-
-					// if (clone.bumpiness(clone.grid) > 15) {
-					// 	stop = true
-					// 	clone.bumpiness(clone.grid)
-					// }
 
 					if (score > bestScore) {
 						bestPosition = [clone.active_tetromino.x, clone.active_tetromino.y, i];
@@ -142,12 +153,19 @@ class Player {
 					}
 
 					// in clone lib
-					// clone = deepclone(this);
 					clone = _.cloneDeep(this);
-					tempclones.push(clone);
+					// it needs to rotate again if its cloned, before it tries to move
+					clone.active_tetromino.rotate(i, clone);
 
-					// clone = await structuredCloneAsync(this);
-					// clone = ceep
+
+					// rotate -i times, which is the same as 4-i times if i<4
+					// clone.active_tetromino.move(0, 0, clone);
+					// clone.active_tetromino.rotate(-i, clone);
+
+					// for (let c of clone.grid) c.reset();
+					// for (let t of clone.tetrominoes) t.updateCells(false, clone)
+
+
 					x++;
 				}
 			}
@@ -162,6 +180,12 @@ class Player {
 			this.active_tetromino.desiredx = bestPosition[0];
 			this.active_tetromino.desiredy = bestPosition[1];
 			this.active_tetromino.desiredRotation = bestPosition[2];
+
+			// only normalise updateStack if it pushed to the stack
+			if (isDrawn && isVisualising.checked()) {
+				// debugger;
+				normaliseUpdateStack();
+			}
 		}
 
 		this.moveActive();
@@ -201,7 +225,6 @@ class Player {
 		// it cant do -1 (-90 degrees) due to naive rotation algorithm, 
 		// just do it 3 (270 degrees)
 		this.active_tetromino.desiredRotation += constrained;
-		if (constrained == -1) constrained = 3
 		this.active_tetromino.rotate(constrained, this);
 
 		update(false);
@@ -254,7 +277,7 @@ class Player {
 	}
 
 	bumpiness(grid) {
-		if (stop) debugger;
+		// if (stop) debugger;
 		let maxYs = this.getMaxYs(grid);
 
 		let bumpiness = 0;

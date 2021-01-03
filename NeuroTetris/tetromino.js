@@ -91,7 +91,6 @@ class Tetromino {
 
 					if (player.grid[index(x, y)].isUsed) {
 						// Game over
-						console.log('isGameOver1')
 						player.isDead = true;
 					}
 				}
@@ -148,6 +147,7 @@ class Tetromino {
 					let y = j + this.y;
 
 					// console.log(x, y)
+					if (player.grid[index(x, y)] == undefined) debugger;
 					player.grid[index(x, y)].col = this.col;
 					player.grid[index(x, y)].isUsed = true;
 					player.grid[index(x, y)].whoUsed = this.i;
@@ -201,12 +201,16 @@ class Tetromino {
 		}
 	}
 
-	rotate(times, player) {
+	rotate(times, player, force) {
 		let type = rotateMatrix(this.type, times);
-		if (this.canMove(0, 0, type, player)) {
+		if (this.canMove(0, 0, type, player) || force) {
 			this.type = type;
 			// make it so it rotates the cells of the board not just the shape itself
 			this.updateCells(false, player);
+
+			// uncomment this if testing the score algorithm
+			// however, this code probably breaks the desired rotation algorithm
+			// this.rotation += times;
 		}
 	}
 

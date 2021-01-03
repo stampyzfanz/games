@@ -6,6 +6,8 @@
 // ];
 // console.log(matrix);
 function rotateMatrix(matrix, times) {
+	if (times < 0) times = 4 - times;
+
 	for (let i = 0; i < matrix.length; i++) {
 		if (typeof matrix[i] == 'String') {
 			matrix[i] = matrix[i].split('');
