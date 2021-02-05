@@ -56,7 +56,7 @@ async function setup() {
 }
 
 function draw(scoreArr) {
-	// console.log(Array.prototype.slice.call(arguments));
+	strokeWeight(1)
 
 	// 1. GAME
 	if (!(generating)) {
@@ -91,39 +91,58 @@ function draw(scoreArr) {
 
 		let algorithms = scoreArr[0];
 		let genes = scoreArr[1];
-		let scores = scoreArr[2];
+		let score = scoreArr[2];
+		let scores = scoreArr[4];
 
-		drawLayer(algorithms, genes, width / 4, width / 2, undefined, 20);
-		drawLayer(genes, scores, width / 2, width / 4 * 3, visualisationHeight / 2, 20);
-		drawLayer([scores[0]], undefined, width / 4 * 3, undefined, undefined, 20);
-	}
-
-}
-
-function drawLayer(weights, nextWeights, x, nextX, nextY, diam) {
-	let total_connections;
-	for (let i = 0; i < weights.length; i++) {
-		if (nextWeights && nextWeights[i]) {
-			total_connections++;
-		}
-	}
-
-	for (let i = 0; i < weights.length; i++) {
-		let y = visualisationHeight / (weights.length + 1) * (i + 1);
-
-		// lines / connections
-		if (nextWeights && nextWeights[i]) {
-			let connection = nextWeights[i];
-
-			let y2 = nextY ? nextY : visualisationHeight / (total_connections + 1) * (i);
-			stroke(connection * 255);
-			line(x, y, nextX, y2);
+		// row 1
+		for (let i = 0; i < 4; i++) {
+			// first is algorithm result
+			let y = visualisationHeight / 5 * (i + 1);
+			let x = width / 4;
+			// line
+			strokeWeight(map(genes[i], 0, 1, 3, 15));
+			stroke(0)
+			line(x, y, x + width / 4, y);
+			// circle
+			noStroke();
+			fill(algorithms[i] * 255)
+			ellipse(x, y, 30)
+			// text
+			textSize(16)
+			fill(algorithms[i] > 0.5 ? 0 : 255)
+			text(Math.floor(algorithms[i] * 10), x, y)
 		}
 
-		// nodes
-		noStroke();
-		fill(weights[i] * 255);
-		ellipse(x, y, diam);
+		// row 2
+		for (let i = 0; i < 4; i++) {
+			// first is algorithm result
+			let y = visualisationHeight / 5 * (i + 1);
+			let x = width / 2;
+			// line
+			strokeWeight(map(scores[i], 0, 1, 3, 15));
+			stroke(0)
+			line(x, y, width / 4 * 3, visualisationHeight / 2);
+			// circle
+			noStroke()
+			fill(scores * 255)
+			ellipse(x, y, 30)
+			// text
+			textSize(16)
+			fill(scores[i] > 0.5 ? 0 : 255)
+			text(Math.floor(scores[i] * 10), x, y)
+			console.log(Math.floor(scores[i] * 10))
+		}
+
+		// final row - output node - row 3
+		let y = visualisationHeight / 2;
+		let x = width / 4 * 3;
+		// circle
+		fill(score * 255)
+		ellipse(x, y, 30)
+		// text
+		textSize(16)
+		fill(score > 0.5 ? 0 : 255)
+		text(Math.floor(score * 10), x, y);
 	}
 }
 
@@ -172,24 +191,45 @@ function update(updateLogic) {
 function normaliseUpdateStack() {
 	newUpdateStack = [];
 
-	// algorithms
+	// score
 	let min = Infinity;
 	let max = -Infinity
 	for (let scoreArr of updateStack) {
-		for (let i = 0; i < scoreArr[0].length; i++) {
-			// TODO: Why i refferenced in here? is that a bug?
-			let thismax = Math.max(...scoreArr[0]);
-			let thismin = Math.min(...scoreArr[0]);
-			if (thismax > max) max = thismax;
-			if (thismin < min) min = thismin;
-		}
+		let scores = scoreArr[0].map((x, i) => x * scoreArr[1][i]);
+		let thismax = Math.max(...scores);
+		let thismin = Math.min(...scores)
+		if (thismax > max) max = thismax;
+		if (thismin < min) min = thismin;
+	}
+
+	for (let i = 0; i < updateStack.length; i++) {
+		let scoreArr = updateStack[i];
+		let scores = scoreArr[0].map((x, i) => x * scoreArr[1][i]);
+
+		newUpdateStack[i] = [];
+		newUpdateStack[i][4] = scores.map(x => map(x, min, max, 0, 1));
+	}
+
+	// algorithms
+	// min = [Infinity, Infinity, Infinity, Infinity];
+	// max = [-Infinity, -Infinity, -Infinity, -Infinity];
+	min = Infinity
+	max = -Infinity
+	for (let scoreArr of updateStack) {
+		// for (let i = 0; i < scoreArr.length; i++) {
+		// 	if (scoreArr[i] > max[i]) max[i] = scoreArr[i];
+		// 	if (scoreArr[i] < min[i]) min[i] = scoreArr[i];
+		// }
+		let thismax = Math.max(...scoreArr[0]);
+		let thismin = Math.min(...scoreArr[0]);
+		if (thismax > max) max = thismax;
+		if (thismin < min) min = thismin;
 	}
 
 
 	for (let i = 0; i < updateStack.length; i++) {
 		let scoreArr = updateStack[i];
 
-		newUpdateStack[i] = [];
 		newUpdateStack[i][0] = [];
 		for (let j = 0; j < scoreArr[0].length; j++) {
 			newUpdateStack[i][0][j] = map(updateStack[i][0][j], min, max, 0, 1);
@@ -228,18 +268,20 @@ function normaliseUpdateStack() {
 
 	for (let i = 0; i < updateStack.length; i++) {
 		let scoreArr = updateStack[i];
-
-		for (let scoreArr of updateStack) {
-			let score = map(scoreArr[2], min, max, 0, 1);
-			newUpdateStack[i][2] = [score, score, score, score];
-		}
+		let score = map(scoreArr[2], min, max, 0, 1);
+		newUpdateStack[i][2] = score;
 
 		// the player itself
 		newUpdateStack[i][3] = updateStack[i][3];
 	}
 
+	min = Infinity;
+	max = -Infinity
+	for (let scoreArr of updateStack) {
+		if (max < scoreArr[2]) max = scoreArr[2];
+		if (min > scoreArr[2]) min = scoreArr[2];
+	}
 
-	if (stop) debugger;
 	updateStack = newUpdateStack;
 }
 

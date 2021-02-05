@@ -98,7 +98,7 @@ class Player {
 
 			clone.active_tetromino.x = 0;
 
-			// every combination of thing thingy
+			// every combination of rotation and x position
 			for (let i = 0; i < 4; i++) {
 				let x = 0;
 

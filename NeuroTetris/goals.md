@@ -10,7 +10,7 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [x] Measure bumpiness
 - [x] Use takes these measurements for every orientation of every position of the tetromino.
 - [x] Times these values by weights determined by GA
-- [] Try to visualise it somehow
+- [x] Try to visualise it somehow
 
 ## Goals
 - [x] Remove NN code
@@ -30,6 +30,6 @@ To put into writing what I want to do with this game so that I don't overenginee
 - [x] check bumpiness and debug maybe
 - [] do GA
 - [] make it faster
-- [] visualise it picking
+- [x] visualise it picking
 - [] remove unnessessary code (eg debug var, console logs, all the extra code for clone.js)
 - [] rename repo to reflect the mode of ML used (ie GA Tetris rather than Neuro or NEAR Tetris)
