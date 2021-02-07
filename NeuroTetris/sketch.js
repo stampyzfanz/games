@@ -191,7 +191,7 @@ function update(updateLogic) {
 function normaliseUpdateStack() {
 	newUpdateStack = [];
 
-	// score
+	// scores
 	let min = Infinity;
 	let max = -Infinity
 	for (let scoreArr of updateStack) {
