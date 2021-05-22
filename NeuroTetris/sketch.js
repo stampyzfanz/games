@@ -118,10 +118,12 @@ function draw(scoreArr) {
 			// first is algorithm result
 			let y = visualisationHeight / 5 * (i + 1);
 			let x = width / 2;
+			// stroke weight for line weight is min and max for every node in column
 			// line
 			strokeWeight(map(scores[i], 0, 1, 3, 15));
 			stroke(0)
 			line(x, y, width / 4 * 3, visualisationHeight / 2);
+			// circle text is max and min for each node
 			// circle
 			noStroke()
 			fill(scores * 255)
@@ -211,29 +213,19 @@ function normaliseUpdateStack() {
 	}
 
 	// algorithms
-	// min = [Infinity, Infinity, Infinity, Infinity];
-	// max = [-Infinity, -Infinity, -Infinity, -Infinity];
-	min = Infinity
-	max = -Infinity
+	min = [Infinity, Infinity, Infinity, Infinity];
+	max = [-Infinity, -Infinity, -Infinity, -Infinity];
 	for (let scoreArr of updateStack) {
-		// for (let i = 0; i < scoreArr.length; i++) {
-		// 	if (scoreArr[i] > max[i]) max[i] = scoreArr[i];
-		// 	if (scoreArr[i] < min[i]) min[i] = scoreArr[i];
-		// }
-		let thismax = Math.max(...scoreArr[0]);
-		let thismin = Math.min(...scoreArr[0]);
-		if (thismax > max) max = thismax;
-		if (thismin < min) min = thismin;
+		for (let i = 0; i < scoreArr.length; i++) {
+			if (scoreArr[0][i] > max[i]) max[i] = scoreArr[0][i];
+			if (scoreArr[0][i] < min[i]) min[i] = scoreArr[0][i];
+		}
 	}
 
-
 	for (let i = 0; i < updateStack.length; i++) {
-		let scoreArr = updateStack[i];
-
-		newUpdateStack[i][0] = [];
-		for (let j = 0; j < scoreArr[0].length; j++) {
-			newUpdateStack[i][0][j] = map(updateStack[i][0][j], min, max, 0, 1);
-		}
+		newUpdateStack[i][0] = updateStack[i][0].map(
+			(x, i) => map(x, min[i], max[i], 0, 1)
+		);
 	}
 
 	// genes
